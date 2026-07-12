@@ -120,7 +120,7 @@ export default function Maintenance() {
             </div>
 
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">Cost ($) *</label>
+              <label className="text-xs text-gray-400 mb-1 block">Cost (₹) *</label>
               <input type="number" name="cost" value={formData.cost} onChange={handleInputChange} required min="0" step="0.01" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none transition-all text-white" />
             </div>
 
@@ -201,7 +201,7 @@ export default function Maintenance() {
                     </div>
                     <p className="text-sm text-gray-300">{log.description}</p>
                     <div className={`text-xs mt-2 font-medium ${log.status === 'OPEN' ? 'text-orange-400' : 'text-green-400'}`}>
-                      {log.status} • ${log.cost.toFixed(2)}
+                      {log.status} • ₹{log.cost.toFixed(2)}
                     </div>
                   </div>
                 </div>

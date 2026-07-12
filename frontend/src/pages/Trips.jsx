@@ -206,7 +206,7 @@ export default function Trips() {
                 <input type="number" required min="0" value={completeData.fuelConsumed} onChange={(e) => setCompleteData({...completeData, fuelConsumed: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none transition-all text-white" />
               </div>
               <div>
-                <label className="text-xs text-gray-400 mb-1 block">Trip Revenue ($) *</label>
+                <label className="text-xs text-gray-400 mb-1 block">Trip Revenue (₹) *</label>
                 <input type="number" required min="0" value={completeData.revenue} onChange={(e) => setCompleteData({...completeData, revenue: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none transition-all text-white" />
               </div>
             </div>

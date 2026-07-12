@@ -45,8 +45,8 @@ export default function Analytics() {
       'Total Distance (km)',
       'Total Fuel (L)',
       'Fuel Efficiency (km/L)',
-      'Total Ops Cost ($)',
-      'Total Revenue ($)',
+      'Total Ops Cost (₹)',
+      'Total Revenue (₹)',
       'ROI (%)',
       'Completed Trips'
     ];
@@ -110,11 +110,11 @@ export default function Analytics() {
       <div className="space-y-8 flex-1">
         <div>
           <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Total Revenue</div>
-          <div className="text-3xl font-display font-medium text-white tracking-tight">${fleetTotalRevenue.toFixed(0)}</div>
+          <div className="text-3xl font-display font-medium text-white tracking-tight">₹{fleetTotalRevenue.toFixed(0)}</div>
         </div>
         <div>
           <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Total Ops Cost</div>
-          <div className="text-3xl font-display font-medium text-orange-400 tracking-tight">${fleetTotalCost.toFixed(0)}</div>
+          <div className="text-3xl font-display font-medium text-orange-400 tracking-tight">₹{fleetTotalCost.toFixed(0)}</div>
         </div>
         <div>
           <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Avg Fuel Efficiency</div>
@@ -153,7 +153,7 @@ export default function Analytics() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <XAxis dataKey="name" stroke="#52525b" tick={{fill: '#a1a1aa', fontSize: 12}} tickLine={false} axisLine={false} />
-                <YAxis stroke="#52525b" tick={{fill: '#a1a1aa', fontSize: 12}} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
+                <YAxis stroke="#52525b" tick={{fill: '#a1a1aa', fontSize: 12}} tickLine={false} axisLine={false} tickFormatter={(val) => `₹${val}`} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#141416', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '8px' }}
                   itemStyle={{ color: '#fff' }}
@@ -198,8 +198,8 @@ export default function Analytics() {
                         <td className="px-6 py-4">{v.completedTripsCount}</td>
                         <td className="px-6 py-4">{v.totalDistance}</td>
                         <td className="px-6 py-4">{v.fuelEfficiency > 0 ? `${v.fuelEfficiency} km/L` : '-'}</td>
-                        <td className="px-6 py-4 font-medium text-orange-400">${v.totalOpsCost.toFixed(2)}</td>
-                        <td className="px-6 py-4 font-medium text-emerald-400">${v.totalRevenue.toFixed(2)}</td>
+                        <td className="px-6 py-4 font-medium text-orange-400">₹{v.totalOpsCost.toFixed(2)}</td>
+                        <td className="px-6 py-4 font-medium text-emerald-400">₹{v.totalRevenue.toFixed(2)}</td>
                         <td className="px-6 py-4">
                           <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${v.roi >= 0 ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
                             {v.roi}%

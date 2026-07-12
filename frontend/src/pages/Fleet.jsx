@@ -167,7 +167,7 @@ export default function Fleet() {
                 <input type="number" min="0" name="maxLoadCapacity" value={formData.maxLoadCapacity} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white transition-all" />
               </div>
               <div>
-                <label className="text-xs text-gray-400 mb-1 block">Cost ($) *</label>
+                <label className="text-xs text-gray-400 mb-1 block">Cost (₹) *</label>
                 <input type="number" min="0" name="acquisitionCost" value={formData.acquisitionCost} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white transition-all" />
               </div>
             </div>

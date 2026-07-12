@@ -163,7 +163,7 @@ export default function Expenses() {
             )}
             
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">Cost ($) *</label>
+              <label className="text-xs text-gray-400 mb-1 block">Cost (₹) *</label>
               <input type="number" name="amount" value={formData.amount} onChange={handleInputChange} required min="0" step="0.01" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none transition-all text-white" placeholder="0.00" />
             </div>
           </div>
@@ -229,7 +229,7 @@ export default function Expenses() {
                       </div>
                       <p className="text-sm text-gray-300">{log.description}</p>
                       <div className={`text-xs mt-2 font-medium ${log.category === 'FUEL' ? 'text-blue-400' : log.category === 'MAINTENANCE' ? 'text-orange-400' : 'text-green-400'}`}>
-                        {log.category} • ${log.amount.toFixed(2)}
+                        {log.category} • ₹{log.amount.toFixed(2)}
                       </div>
                     </div>
                   </div>
@@ -253,21 +253,21 @@ export default function Expenses() {
                     <div className="space-y-3 mb-6">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400 flex items-center gap-2"><Droplets className="w-4 h-4 text-blue-400" /> Fuel</span>
-                        <span className="text-gray-200">${cost.fuelTotal.toFixed(2)}</span>
+                        <span className="text-gray-200">₹{cost.fuelTotal.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400 flex items-center gap-2"><Wrench className="w-4 h-4 text-orange-400" /> Maintenance</span>
-                        <span className="text-gray-200">${cost.maintenanceTotal.toFixed(2)}</span>
+                        <span className="text-gray-200">₹{cost.maintenanceTotal.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400 flex items-center gap-2"><DollarSign className="w-4 h-4 text-green-400" /> Expenses</span>
-                        <span className="text-gray-200">${cost.expenseTotal.toFixed(2)}</span>
+                        <span className="text-gray-200">₹{cost.expenseTotal.toFixed(2)}</span>
                       </div>
                     </div>
                     
                     <div className="pt-4 border-t border-white/10 flex justify-between items-center">
                       <span className="text-sm font-medium text-gray-400">Total Ops Cost</span>
-                      <span className="text-xl font-bold text-white">${cost.totalOperationalCost.toFixed(2)}</span>
+                      <span className="text-xl font-bold text-white">₹{cost.totalOperationalCost.toFixed(2)}</span>
                     </div>
                   </div>
                 ))
