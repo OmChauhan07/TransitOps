@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Truck, 
-  CheckCircle, 
-  Wrench, 
-  Play, 
-  FileText, 
-  Users, 
+import {
+  Truck,
+  CheckCircle,
+  Wrench,
+  Play,
+  FileText,
+  Users,
   Activity,
   Plus
 } from 'lucide-react';
@@ -55,26 +55,26 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
-      
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Fleet Overview</h1>
           <p className="text-gray-400 text-sm mt-1">Real-time metrics and operations center</p>
         </div>
         <div className="flex gap-3">
-          <button 
+          <button
             onClick={() => navigate('/fleet')}
             className="bg-[#1e293b] hover:bg-[#334155] border border-gray-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors text-sm"
           >
             <Plus className="w-4 h-4 mr-2" /> Register Vehicle
           </button>
-          <button 
+          <button
             onClick={() => navigate('/trips')}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors text-sm"
           >
             <Play className="w-4 h-4 mr-2" /> Create Trip
           </button>
-          <button 
+          <button
             onClick={() => navigate('/maintenance')}
             className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors text-sm"
           >
@@ -84,47 +84,47 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard 
+        <KPICard
           title="Total Active Vehicles"
           value={kpis.totalVehicles}
           icon={Truck}
           colorClass="bg-blue-500/10 text-blue-400"
-          subtitle="Registered & non-retired"
+          subtitle=""
         />
-        <KPICard 
+        <KPICard
           title="Available for Dispatch"
           value={kpis.availableVehicles}
           icon={CheckCircle}
           colorClass="bg-green-500/10 text-green-400"
         />
-        <KPICard 
+        <KPICard
           title="Vehicles In Shop"
           value={kpis.maintenanceVehicles}
           icon={Wrench}
           colorClass="bg-orange-500/10 text-orange-400"
         />
-        <KPICard 
+        <KPICard
           title="Fleet Utilization"
           value={`${kpis.fleetUtilization}%`}
           icon={Activity}
           colorClass="bg-purple-500/10 text-purple-400"
-          subtitle="% of fleet ON_TRIP"
+          subtitle=""
         />
-        <KPICard 
+        <KPICard
           title="Active Trips"
           value={kpis.activeTrips}
           icon={Play}
           colorClass="bg-emerald-500/10 text-emerald-400"
-          subtitle="Currently DISPATCHED"
+          subtitle=""
         />
-        <KPICard 
+        <KPICard
           title="Pending Trips"
           value={kpis.pendingTrips}
           icon={FileText}
           colorClass="bg-yellow-500/10 text-yellow-400"
-          subtitle="Currently in DRAFT"
+          subtitle=""
         />
-        <KPICard 
+        <KPICard
           title="Drivers On Duty"
           value={kpis.driversOnDuty}
           icon={Users}
