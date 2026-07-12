@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Play, Check, XCircle, Trash2, Search, X } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
 import StatusPill from '../components/StatusPill';
+import CustomSelect from '../components/CustomSelect';
 
 export default function Trips() {
   const [trips, setTrips] = useState([]);
@@ -221,17 +222,29 @@ export default function Trips() {
             </div>
             <div>
               <label className="text-xs text-gray-400 mb-1 block">Vehicle *</label>
-              <select name="vehicleId" value={formData.vehicleId} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all">
-                <option value="">Select vehicle...</option>
-                {availableVehicles.map(v => <option key={v.id} value={v.id}>{v.registrationNumber} (Max: {v.maxLoadCapacity}kg)</option>)}
-              </select>
+              <CustomSelect 
+                name="vehicleId" 
+                value={formData.vehicleId} 
+                onChange={handleInputChange} 
+                placeholder="Select vehicle..."
+                options={[
+                  { value: '', label: 'Select vehicle...' },
+                  ...availableVehicles.map(v => ({ value: v.id, label: `${v.registrationNumber} (Max: ${v.maxLoadCapacity}kg)` }))
+                ]}
+              />
             </div>
             <div>
               <label className="text-xs text-gray-400 mb-1 block">Driver *</label>
-              <select name="driverId" value={formData.driverId} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all">
-                <option value="">Select driver...</option>
-                {availableDrivers.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-              </select>
+              <CustomSelect 
+                name="driverId" 
+                value={formData.driverId} 
+                onChange={handleInputChange} 
+                placeholder="Select driver..."
+                options={[
+                  { value: '', label: 'Select driver...' },
+                  ...availableDrivers.map(d => ({ value: d.id, label: d.name }))
+                ]}
+              />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -264,13 +277,21 @@ export default function Trips() {
               <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input type="text" placeholder="Search trips..." className="pl-8 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.search} onChange={(e) => setFilters({...filters, search: e.target.value})} />
             </div>
-            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.status} onChange={(e) => setFilters({...filters, status: e.target.value})}>
-              <option value="">All Statuses</option>
-              <option value="DRAFT">Draft</option>
-              <option value="DISPATCHED">Dispatched</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="CANCELLED">Cancelled</option>
-            </select>
+            <div className="w-40">
+              <CustomSelect 
+                name="status"
+                value={filters.status} 
+                onChange={(e) => setFilters({...filters, status: e.target.value})}
+                placeholder="All Statuses"
+                options={[
+                  { value: '', label: 'All Statuses' },
+                  { value: 'DRAFT', label: 'Draft' },
+                  { value: 'DISPATCHED', label: 'Dispatched' },
+                  { value: 'COMPLETED', label: 'Completed' },
+                  { value: 'CANCELLED', label: 'Cancelled' }
+                ]}
+              />
+            </div>
           </div>
         </div>
 
