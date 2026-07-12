@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { PenTool, CheckCircle, Search, Wrench } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
+import CustomSelect from '../components/CustomSelect';
 
 export default function Maintenance() {
   const [logs, setLogs] = useState([]);
@@ -102,14 +103,19 @@ export default function Maintenance() {
           <div className="space-y-4 flex-1">
             <div>
               <label className="text-xs text-gray-400 mb-1 block">Vehicle *</label>
-              <select name="vehicleId" value={formData.vehicleId} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all">
-                <option value="">Select a Vehicle</option>
-                {eligibleVehicles.map(v => (
-                  <option key={v.id} value={v.id}>
-                    {v.registrationNumber} - {v.type} ({v.status})
-                  </option>
-                ))}
-              </select>
+              <CustomSelect
+                name="vehicleId"
+                value={formData.vehicleId}
+                onChange={handleInputChange}
+                placeholder="Select a Vehicle"
+                options={[
+                  { value: '', label: 'Select a Vehicle' },
+                  ...eligibleVehicles.map(v => ({
+                    value: v.id,
+                    label: `${v.registrationNumber} - ${v.type} (${v.status})`
+                  }))
+                ]}
+              />
               <p className="text-xs text-gray-500 mt-1">Pulls vehicle from dispatch pool.</p>
             </div>
 
@@ -143,17 +149,31 @@ export default function Maintenance() {
           </div>
           
           <div className="flex gap-2 relative z-20">
-            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.vehicleId} onChange={(e) => setFilters({...filters, vehicleId: e.target.value})}>
-              <option value="">All Vehicles</option>
-              {vehicles.map(v => (
-                <option key={v.id} value={v.id}>{v.registrationNumber}</option>
-              ))}
-            </select>
-            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.status} onChange={(e) => setFilters({...filters, status: e.target.value})}>
-              <option value="">All Statuses</option>
-              <option value="OPEN">Open</option>
-              <option value="CLOSED">Closed</option>
-            </select>
+            <div className="w-40">
+              <CustomSelect 
+                name="vehicleId"
+                value={filters.vehicleId} 
+                onChange={(e) => setFilters({...filters, vehicleId: e.target.value})}
+                placeholder="All Vehicles"
+                options={[
+                  { value: '', label: 'All Vehicles' },
+                  ...vehicles.map(v => ({ value: v.id, label: v.registrationNumber }))
+                ]}
+              />
+            </div>
+            <div className="w-36">
+              <CustomSelect 
+                name="status"
+                value={filters.status} 
+                onChange={(e) => setFilters({...filters, status: e.target.value})}
+                placeholder="All Statuses"
+                options={[
+                  { value: '', label: 'All Statuses' },
+                  { value: 'OPEN', label: 'Open' },
+                  { value: 'CLOSED', label: 'Closed' }
+                ]}
+              />
+            </div>
           </div>
         </div>
 

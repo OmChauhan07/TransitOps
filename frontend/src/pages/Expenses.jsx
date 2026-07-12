@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Fuel, Receipt, DollarSign, Droplets, Wrench, Search } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
+import CustomSelect from '../components/CustomSelect';
 
 export default function Expenses() {
   const [logs, setLogs] = useState([]);
@@ -126,21 +127,31 @@ export default function Expenses() {
           <div className="space-y-4 flex-1">
             <div>
               <label className="text-xs text-gray-400 mb-1 block">Vehicle *</label>
-              <select name="vehicleId" value={formData.vehicleId} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all">
-                <option value="">Select vehicle...</option>
-                {vehicles.map(v => (
-                  <option key={v.id} value={v.id}>{v.registrationNumber}</option>
-                ))}
-              </select>
+              <CustomSelect
+                name="vehicleId"
+                value={formData.vehicleId}
+                onChange={handleInputChange}
+                placeholder="Select vehicle..."
+                options={[
+                  { value: '', label: 'Select vehicle...' },
+                  ...vehicles.map(v => ({ value: v.id, label: v.registrationNumber }))
+                ]}
+              />
             </div>
             
             {logType === 'EXPENSE' && (
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Expense Type *</label>
-                <select name="entryType" value={formData.entryType} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all">
-                  <option value="OTHER">Other Expense</option>
-                  <option value="TOLL">Toll</option>
-                </select>
+                <CustomSelect
+                  name="entryType"
+                  value={formData.entryType}
+                  onChange={handleInputChange}
+                  placeholder="Expense Type"
+                  options={[
+                    { value: 'OTHER', label: 'Other Expense' },
+                    { value: 'TOLL', label: 'Toll' }
+                  ]}
+                />
               </div>
             )}
 
@@ -185,12 +196,18 @@ export default function Expenses() {
           </div>
           
           <div className="flex gap-2 relative z-20">
-            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.vehicleId} onChange={(e) => setFilters({...filters, vehicleId: e.target.value})}>
-              <option value="">All Vehicles</option>
-              {vehicles.map(v => (
-                <option key={v.id} value={v.id}>{v.registrationNumber}</option>
-              ))}
-            </select>
+            <div className="w-40">
+              <CustomSelect 
+                name="vehicleId"
+                value={filters.vehicleId} 
+                onChange={(e) => setFilters({...filters, vehicleId: e.target.value})}
+                placeholder="All Vehicles"
+                options={[
+                  { value: '', label: 'All Vehicles' },
+                  ...vehicles.map(v => ({ value: v.id, label: v.registrationNumber }))
+                ]}
+              />
+            </div>
           </div>
         </div>
 
