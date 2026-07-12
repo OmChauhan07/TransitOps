@@ -22,24 +22,37 @@ export default function LeftSidebar() {
   const allowedNavItems = NAV_ITEMS.filter(item => item.roles.includes(user.role));
 
   return (
-    <div className="w-16 border-r border-white/10 bg-[#141416] flex flex-col items-center py-4 shrink-0">
-      <div className="w-10 h-10 bg-brand-accent/20 rounded-xl flex items-center justify-center mb-8 text-brand-accent">
-        <Truck className="w-6 h-6" />
+    <div className="group w-[72px] hover:w-64 transition-all duration-300 ease-in-out border-r border-white/10 bg-[#141416] flex flex-col py-4 shrink-0 overflow-y-auto overflow-x-hidden relative z-50">
+      
+      {/* Logo Section */}
+      <div className="flex items-center px-3 mb-8 w-64">
+        <div className="w-12 h-12 bg-brand-accent/20 rounded-xl flex items-center justify-center text-brand-accent shrink-0">
+          <Truck className="w-6 h-6 shrink-0" />
+        </div>
+        <span className="ml-3 font-display font-bold text-xl tracking-tight text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+          TransitOps
+        </span>
       </div>
       
-      <div className="flex flex-col gap-4 w-full px-2">
+      {/* Nav Items */}
+      <div className="flex flex-col gap-2 w-64 px-3">
         {allowedNavItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `w-12 h-12 rounded-xl flex items-center justify-center transition-colors mx-auto ${
-                isActive ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-white hover:bg-white/5'
+              `w-[48px] group-hover:w-full h-12 rounded-xl flex items-center transition-all duration-300 overflow-hidden ${
+                isActive ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`
             }
             title={item.name}
           >
-            <item.icon className="w-5 h-5" />
+            <div className="w-12 h-12 flex items-center justify-center shrink-0">
+              <item.icon className="w-5 h-5 shrink-0" />
+            </div>
+            <span className="ml-1 text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {item.name}
+            </span>
           </NavLink>
         ))}
       </div>

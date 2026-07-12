@@ -1,6 +1,6 @@
 export default function TrustLogos() {
   return (
-    <div className="w-full max-w-5xl mx-auto py-24 px-6 relative z-20">
+    <div id="partners" className="w-full max-w-5xl mx-auto py-24 px-6 relative z-20">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 opacity-70 grayscale">
         {/* Placeholder Logos styling mimicking the reference */}
         <div className="flex items-center justify-center p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm transition-all hover:bg-white/10 hover:grayscale-0">

@@ -15,10 +15,10 @@ export default function Navbar() {
         </Link>
         
         <div className="hidden md:flex items-center gap-8">
-          <a href="#" className="text-sm text-gray-300 hover:text-white transition-colors">Platform</a>
-          <a href="#" className="text-sm text-gray-300 hover:text-white transition-colors">Solutions</a>
-          <a href="#" className="text-sm text-gray-300 hover:text-white transition-colors">Company</a>
-          <a href="#" className="text-sm text-gray-300 hover:text-white transition-colors">Support</a>
+          <a href="#platform" className="text-sm text-gray-300 hover:text-white transition-colors">Platform</a>
+          <a href="#benefits" className="text-sm text-gray-300 hover:text-white transition-colors">Benefits</a>
+          <a href="#partners" className="text-sm text-gray-300 hover:text-white transition-colors">Partners</a>
+          <a href="#contact" className="text-sm text-gray-300 hover:text-white transition-colors">Contact</a>
         </div>
 
         <div className="hidden md:flex items-center gap-4">
@@ -42,10 +42,10 @@ export default function Navbar() {
           animate={{ opacity: 1, y: 0 }}
           className="absolute top-full left-0 right-0 mt-4 p-4 rounded-2xl bg-[#141416] border border-white/10 flex flex-col gap-4 md:hidden"
         >
-          <a href="#" className="text-gray-300 hover:text-white p-2">Platform</a>
-          <a href="#" className="text-gray-300 hover:text-white p-2">Solutions</a>
-          <a href="#" className="text-gray-300 hover:text-white p-2">Company</a>
-          <a href="#" className="text-gray-300 hover:text-white p-2">Support</a>
+          <a href="#platform" className="text-gray-300 hover:text-white p-2" onClick={() => setIsOpen(false)}>Platform</a>
+          <a href="#benefits" className="text-gray-300 hover:text-white p-2" onClick={() => setIsOpen(false)}>Benefits</a>
+          <a href="#partners" className="text-gray-300 hover:text-white p-2" onClick={() => setIsOpen(false)}>Partners</a>
+          <a href="#contact" className="text-gray-300 hover:text-white p-2" onClick={() => setIsOpen(false)}>Contact</a>
           <Link to="/login" className="text-center w-full px-5 py-3 text-gray-300 hover:text-white text-sm font-medium">
             Log in
           </Link>

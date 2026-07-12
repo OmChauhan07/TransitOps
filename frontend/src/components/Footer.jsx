@@ -2,7 +2,7 @@ import { Truck } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-brand-bg border-t border-white/10 pt-20 pb-10 px-6 relative z-30">
+    <footer id="contact" className="w-full bg-brand-bg border-t border-white/10 pt-20 pb-10 px-6 relative z-30">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
         
         <div className="col-span-1 md:col-span-1">

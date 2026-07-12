@@ -1,6 +1,6 @@
 export default function Benefits() {
   return (
-    <div className="w-full bg-brand-bg relative z-30 pt-32 pb-40 px-6">
+    <div id="benefits" className="w-full bg-brand-bg relative z-30 pt-32 pb-40 px-6">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl md:text-5xl font-display font-medium text-center text-white mb-20 tracking-tight">
           Our Benefits

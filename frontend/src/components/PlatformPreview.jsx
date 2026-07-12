@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 
 export default function PlatformPreview() {
   return (
-    <div className="w-full bg-brand-bg relative z-30 pt-20 pb-32 px-6">
+    <div id="platform" className="w-full bg-brand-bg relative z-30 pt-20 pb-32 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-display font-medium text-white mb-6 tracking-tight">
