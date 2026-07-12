@@ -1,54 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #3b82f6;
-  --color-primary-hover: #2563eb;
-  --color-bg-dark: #0f172a;
-  --color-surface: #1e293b;
-  --color-surface-hover: #334155;
-  --color-text-light: #f8fafc;
-  --color-text-muted: #94a3b8;
-  --color-border: #334155;
-  
-  /* Status Colors */
-  --color-status-success: #10b981;
-  --color-status-success-bg: rgba(16, 185, 129, 0.15);
-  --color-status-warning: #f59e0b;
-  --color-status-warning-bg: rgba(245, 158, 11, 0.15);
-  --color-status-error: #ef4444;
-  --color-status-error-bg: rgba(239, 68, 68, 0.15);
-  --color-status-info: #3b82f6;
-  --color-status-info-bg: rgba(59, 130, 246, 0.15);
-}
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 
-:root {
-  color-scheme: dark;
+  --color-brand-bg: #0a0a0a;
+  --color-brand-card: #141416;
+  --color-brand-accent: #f57c00; /* warm orange/amber */
 }
 
 body {
-  margin: 0;
-  background-color: var(--color-bg-dark);
-  color: var(--color-text-light);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#root {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Base Form styles for premium look */
-input, select {
-  background-color: var(--color-bg-dark) !important;
-  color: var(--color-text-light) !important;
-  border-color: var(--color-border) !important;
-}
-
-input:focus, select:focus {
-  border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 1px var(--color-primary) !important;
+  background-color: var(--color-brand-bg);
+  color: #f3f4f6;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
 }

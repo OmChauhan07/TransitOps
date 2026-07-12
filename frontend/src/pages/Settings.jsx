@@ -1,7 +1,8 @@
 import React from 'react';
-import { Shield, Check, X } from 'lucide-react';
+import { Shield, Check, X, Building2 } from 'lucide-react';
+import PageLayout from '../components/app/PageLayout';
 
-const Settings = () => {
+export default function Settings() {
   
   const roles = ['FLEET_MANAGER', 'DRIVER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST'];
   const modules = [
@@ -15,69 +16,79 @@ const Settings = () => {
     { key: 'Settings', access: ['FLEET_MANAGER', 'DRIVER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST'] },
   ];
 
-  return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+  const renderInspector = () => (
+    <div className="p-6 flex flex-col h-full bg-[#141416]">
+      <div className="flex items-center gap-2 mb-8">
+        <Building2 className="w-5 h-5 text-brand-accent" />
+        <h3 className="font-display font-medium text-lg">Organization Profile</h3>
+      </div>
       
-      <div>
-        <h1 className="text-2xl font-bold text-white">Settings & RBAC</h1>
-        <p className="text-gray-400 text-sm mt-1">Manage platform configuration and role-based access control</p>
-      </div>
-
-      <div className="bg-[#1e293b] rounded-xl border border-gray-700 overflow-hidden">
-        <div className="p-6 border-b border-gray-700 flex items-center gap-3">
-          <Shield className="w-5 h-5 text-blue-400" />
-          <h3 className="text-lg font-bold text-white">Role-Based Access Matrix</h3>
+      <div className="space-y-6 flex-1">
+        <div>
+          <label className="text-xs text-gray-400 mb-1 block">Company Name</label>
+          <input type="text" value="TransitOps Demo Corp" disabled className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-500 cursor-not-allowed" />
         </div>
-        <div className="p-6 text-sm text-gray-400 border-b border-gray-700">
-          This read-only matrix outlines the modules available to each user role. Access to these routes is strictly enforced by the platform's security middleware.
+        <div>
+          <label className="text-xs text-gray-400 mb-1 block">Support Email</label>
+          <input type="text" value="support@transitops.demo" disabled className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-500 cursor-not-allowed" />
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-300">
-            <thead className="bg-[#0f172a] text-gray-400 text-xs uppercase">
-              <tr>
-                <th className="px-6 py-4 font-medium">Module</th>
-                {roles.map(role => (
-                  <th key={role} className="px-6 py-4 font-medium text-center">{role.replace('_', ' ')}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-700">
-              {modules.map(module => (
-                <tr key={module.key} className="hover:bg-[#334155] transition-colors">
-                  <td className="px-6 py-4 font-medium text-white">{module.key}</td>
-                  {roles.map(role => (
-                    <td key={role} className="px-6 py-4 text-center">
-                      {module.access.includes(role) ? (
-                        <Check className="w-5 h-5 text-green-500 mx-auto" />
-                      ) : (
-                        <X className="w-5 h-5 text-gray-600 mx-auto" />
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        
+        <div className="p-4 bg-brand-accent/10 border border-brand-accent/20 rounded-lg">
+          <p className="text-xs text-brand-accent font-medium">Demo Environment</p>
+          <p className="text-xs text-brand-accent/70 mt-1">
+            Organization settings are locked in the current demo environment.
+          </p>
         </div>
       </div>
-
-      <div className="bg-[#1e293b] rounded-xl border border-gray-700 p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Organization Profile</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Company Name</label>
-            <input type="text" value="TransitOps Demo Corp" disabled className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-gray-500 cursor-not-allowed" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Support Email</label>
-            <input type="text" value="support@transitops.demo" disabled className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-gray-500 cursor-not-allowed" />
-          </div>
-        </div>
-        <div className="mt-4 text-xs text-gray-500">Settings are locked in the demo environment.</div>
-      </div>
-
     </div>
   );
-};
 
-export default Settings;
+  return (
+    <PageLayout inspector={renderInspector()}>
+      <div className="flex flex-col h-full overflow-y-auto pr-2">
+        <div className="mb-8 shrink-0">
+          <h2 className="text-2xl font-display font-medium mb-1">Settings & RBAC</h2>
+          <p className="text-sm text-gray-400">Manage platform configuration and role-based access control</p>
+        </div>
+
+        <div className="bg-[#141416] border border-white/10 rounded-xl overflow-hidden flex-1 flex flex-col min-h-0">
+          <div className="p-6 border-b border-white/10 flex items-center gap-3 shrink-0">
+            <Shield className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-medium text-white">Role-Based Access Matrix</h3>
+          </div>
+          <div className="px-6 py-4 text-sm text-gray-400 border-b border-white/10 bg-white/[0.02] shrink-0">
+            This read-only matrix outlines the modules available to each user role. Access to these routes is strictly enforced by the platform's security middleware.
+          </div>
+          <div className="overflow-x-auto flex-1">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+              <thead className="bg-white/5 text-gray-400 sticky top-0 z-10">
+                <tr>
+                  <th className="px-6 py-3 font-medium">Module</th>
+                  {roles.map(role => (
+                    <th key={role} className="px-6 py-3 font-medium text-center text-xs tracking-wider">{role.replace('_', ' ')}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5 text-gray-300">
+                {modules.map(module => (
+                  <tr key={module.key} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="px-6 py-4 font-medium text-white">{module.key}</td>
+                    {roles.map(role => (
+                      <td key={role} className="px-6 py-4 text-center">
+                        {module.access.includes(role) ? (
+                          <div className="flex justify-center"><Check className="w-4 h-4 text-green-400" /></div>
+                        ) : (
+                          <div className="flex justify-center"><X className="w-4 h-4 text-gray-600" /></div>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </PageLayout>
+  );
+}

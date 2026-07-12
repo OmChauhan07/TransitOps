@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, X, Search, Wrench, CheckCircle } from 'lucide-react';
-import StatusPill from '../components/StatusPill';
+import { PenTool, CheckCircle, Search, Wrench } from 'lucide-react';
+import PageLayout from '../components/app/PageLayout';
 
-const Maintenance = () => {
+export default function Maintenance() {
   const [logs, setLogs] = useState([]);
   const [filteredLogs, setFilteredLogs] = useState([]);
   const [vehicles, setVehicles] = useState([]);
 
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [formData, setFormData] = useState({
     vehicleId: '',
     description: '',
@@ -70,214 +69,127 @@ const Maintenance = () => {
     setError('');
     try {
       await axios.post('http://localhost:3000/api/maintenance', formData, getHeaders());
-      setShowCreateModal(false);
       setFormData({ vehicleId: '', description: '', cost: '' });
       fetchLogs();
-      fetchVehicles(); // update vehicle statuses
+      fetchVehicles();
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to open maintenance ticket');
     }
   };
 
-  const handleCloseTicket = async (id) => {
+  const handleCloseTicket = async (id, e) => {
+    e.stopPropagation();
     if (!window.confirm('Are you sure you want to close this ticket? The vehicle will be returned to the dispatch pool.')) return;
     try {
       await axios.post(`http://localhost:3000/api/maintenance/${id}/close`, {}, getHeaders());
       fetchLogs();
-      fetchVehicles(); // update vehicle statuses
+      fetchVehicles();
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to close ticket');
     }
   };
 
-  // We can show all vehicles in the lookup, or just ones that aren't retired. 
-  // For maintenance, it's possible you do maintenance on an available or in-shop vehicle.
   const eligibleVehicles = vehicles.filter(v => v.status !== 'ON_TRIP');
 
-  return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Maintenance Logs</h1>
-          <p className="text-gray-400 text-sm mt-1">Track vehicle repairs and govern dispatch availability</p>
-        </div>
-        <button 
-          onClick={() => { setError(''); setShowCreateModal(true); }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
-        >
-          <Plus className="w-5 h-5 mr-2" /> Open Ticket
-        </button>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-[#1e293b] p-4 rounded-xl border border-gray-700 mb-6 flex flex-wrap gap-4 items-center">
-        <select 
-          className="bg-[#0f172a] border border-gray-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
-          value={filters.vehicleId}
-          onChange={(e) => setFilters({...filters, vehicleId: e.target.value})}
-        >
-          <option value="">All Vehicles</option>
-          {vehicles.map(v => (
-            <option key={v.id} value={v.id}>{v.registrationNumber} ({v.type})</option>
-          ))}
-        </select>
+  const renderInspector = () => {
+    return (
+      <div className="p-6 flex flex-col h-full overflow-y-auto">
+        <h3 className="font-display font-medium text-lg mb-6">Open Ticket</h3>
         
-        <select 
-          className="bg-[#0f172a] border border-gray-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
-          value={filters.status}
-          onChange={(e) => setFilters({...filters, status: e.target.value})}
-        >
-          <option value="">All Statuses</option>
-          <option value="OPEN">Open</option>
-          <option value="CLOSED">Closed</option>
-        </select>
-      </div>
-
-      {/* Table */}
-      <div className="bg-[#1e293b] rounded-xl border border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-300">
-            <thead className="bg-[#0f172a] text-gray-400 text-xs uppercase">
-              <tr>
-                <th className="px-6 py-4 font-medium">Vehicle</th>
-                <th className="px-6 py-4 font-medium">Description</th>
-                <th className="px-6 py-4 font-medium">Cost ($)</th>
-                <th className="px-6 py-4 font-medium">Opened Date</th>
-                <th className="px-6 py-4 font-medium">Status</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-700">
-              {filteredLogs.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
-                    No maintenance records found.
-                  </td>
-                </tr>
-              ) : (
-                filteredLogs.map(log => (
-                  <tr key={log.id} className="hover:bg-[#334155] transition-colors">
-                    <td className="px-6 py-4 font-medium text-white">
-                      {log.vehicle?.registrationNumber || 'N/A'}
-                    </td>
-                    <td className="px-6 py-4 max-w-xs truncate" title={log.description}>{log.description}</td>
-                    <td className="px-6 py-4">${log.cost.toFixed(2)}</td>
-                    <td className="px-6 py-4">{new Date(log.createdAt).toLocaleDateString()}</td>
-                    <td className="px-6 py-4">
-                      {/* For the Log status, we can use the same StatusPill component but maybe mapped since log status is OPEN/CLOSED */}
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                        log.status === 'OPEN' 
-                          ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' 
-                          : 'bg-green-500/10 text-green-400 border-green-500/20'
-                      }`}>
-                        {log.status === 'OPEN' ? <Wrench className="w-3 h-3 mr-1" /> : <CheckCircle className="w-3 h-3 mr-1" />}
-                        {log.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      {log.status === 'OPEN' && (
-                        <button 
-                          onClick={() => handleCloseTicket(log.id)} 
-                          className="text-blue-400 hover:text-blue-300 transition-colors inline-flex p-1 text-sm font-medium items-center"
-                        >
-                          <CheckCircle className="w-4 h-4 mr-1" /> Close Ticket
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Create Ticket Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1e293b] rounded-xl border border-gray-700 w-full max-w-lg shadow-2xl overflow-hidden">
-            <div className="flex justify-between items-center p-6 border-b border-gray-700">
-              <h3 className="text-xl font-bold text-white">Open Maintenance Ticket</h3>
-              <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-white transition-colors">
-                <X className="w-5 h-5" />
-              </button>
+        <form onSubmit={handleCreateSubmit} className="flex flex-col flex-1 h-full min-h-min">
+          {error && <div className="mb-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm p-3 rounded-lg">{error}</div>}
+          
+          <div className="space-y-4 flex-1">
+            <div>
+              <label className="text-xs text-gray-400 mb-1 block">Vehicle *</label>
+              <select name="vehicleId" value={formData.vehicleId} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all">
+                <option value="">Select a Vehicle</option>
+                {eligibleVehicles.map(v => (
+                  <option key={v.id} value={v.id}>
+                    {v.registrationNumber} - {v.type} ({v.status})
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">Pulls vehicle from dispatch pool.</p>
             </div>
-            <form onSubmit={handleCreateSubmit} className="p-6">
-              {error && (
-                <div className="mb-4 bg-red-500/10 border border-red-500/50 text-red-500 text-sm px-4 py-3 rounded-lg">
-                  {error}
-                </div>
-              )}
-              <div className="space-y-4">
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Vehicle *</label>
-                  <select 
-                    name="vehicleId" 
-                    value={formData.vehicleId}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="">Select a Vehicle</option>
-                    {eligibleVehicles.map(v => (
-                      <option key={v.id} value={v.id}>
-                        {v.registrationNumber} - {v.type} ({v.status})
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-gray-500 mt-1">This will pull the vehicle from the dispatch pool.</p>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Description *</label>
-                  <textarea 
-                    name="description" 
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    required
-                    rows="3"
-                    className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                    placeholder="Describe the issue or maintenance required..."
-                  />
-                </div>
+            <div>
+              <label className="text-xs text-gray-400 mb-1 block">Cost ($) *</label>
+              <input type="number" name="cost" value={formData.cost} onChange={handleInputChange} required min="0" step="0.01" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none transition-all text-white" />
+            </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Estimated or Actual Cost ($) *</label>
-                  <input 
-                    type="number" 
-                    name="cost" 
-                    value={formData.cost}
-                    onChange={handleInputChange}
-                    required
-                    min="0"
-                    step="0.01"
-                    className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
+            <div>
+              <label className="text-xs text-gray-400 mb-1 block">Description *</label>
+              <textarea name="description" value={formData.description} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none transition-all min-h-[100px] text-white" placeholder="Describe the issue..." />
+            </div>
+          </div>
 
-              </div>
-              <div className="mt-6 flex justify-end gap-3">
-                <button 
-                  type="button" 
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 bg-transparent text-gray-300 hover:text-white transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium flex items-center"
-                >
-                  <Wrench className="w-4 h-4 mr-2" /> Open Ticket
-                </button>
-              </div>
-            </form>
+          <button type="submit" className="w-full bg-brand-accent hover:bg-orange-500 text-white font-medium py-2.5 rounded-lg transition-colors mt-8 shadow-[0_0_15px_rgba(245,124,0,0.3)] flex items-center justify-center gap-2">
+            <Wrench className="w-4 h-4" /> Open Ticket
+          </button>
+        </form>
+      </div>
+    );
+  };
+
+  return (
+    <PageLayout inspector={renderInspector()}>
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-2 shrink-0">
+          <div className="flex items-center gap-6">
+            <div className="text-lg font-display font-medium text-white border-b-2 border-brand-accent pb-2 -mb-[9px]">
+              Maintenance
+            </div>
+          </div>
+          
+          <div className="flex gap-2 relative z-20">
+            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.vehicleId} onChange={(e) => setFilters({...filters, vehicleId: e.target.value})}>
+              <option value="">All Vehicles</option>
+              {vehicles.map(v => (
+                <option key={v.id} value={v.id}>{v.registrationNumber}</option>
+              ))}
+            </select>
+            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.status} onChange={(e) => setFilters({...filters, status: e.target.value})}>
+              <option value="">All Statuses</option>
+              <option value="OPEN">Open</option>
+              <option value="CLOSED">Closed</option>
+            </select>
           </div>
         </div>
-      )}
-    </div>
-  );
-};
 
-export default Maintenance;
+        <div className="bg-[#141416] border border-white/10 rounded-xl overflow-hidden flex-1 overflow-y-auto">
+          <div className="space-y-0 divide-y divide-white/5">
+            {filteredLogs.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">No maintenance records found.</div>
+            ) : (
+              filteredLogs.map(log => (
+                <div key={log.id} className="p-4 flex gap-4 items-start transition-colors hover:bg-white/[0.02]">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border ${log.status === 'OPEN' ? 'bg-orange-500/10 border-orange-500/20 text-orange-400' : 'bg-green-500/10 border-green-500/20 text-green-400'}`}>
+                    {log.status === 'OPEN' ? <PenTool className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-white">{log.vehicle?.registrationNumber || 'N/A'}</span>
+                        <span className="text-gray-500 text-xs">• {new Date(log.createdAt).toLocaleDateString()}</span>
+                      </div>
+                      {log.status === 'OPEN' && (
+                        <button onClick={(e) => handleCloseTicket(log.id, e)} className="text-brand-accent hover:text-orange-400 transition-colors text-xs font-medium flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" /> Close Ticket
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-300">{log.description}</p>
+                    <div className={`text-xs mt-2 font-medium ${log.status === 'OPEN' ? 'text-orange-400' : 'text-green-400'}`}>
+                      {log.status} • ${log.cost.toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </PageLayout>
+  );
+}

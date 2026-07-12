@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-import Layout from './components/Layout';
+import AppLayout from './components/app/AppLayout';
 
 import Register from './pages/Register';
 import VerifyOtp from './pages/VerifyOtp';
 import Login from './pages/Login';
+import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -19,7 +20,7 @@ import Settings from './pages/Settings';
 
 // Wrapper for public auth routes
 const AuthLayout = ({ children }) => (
-  <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 w-full">
+  <div className="min-h-screen bg-brand-bg flex flex-col items-center justify-center p-4 w-full">
     {children}
   </div>
 );
@@ -29,8 +30,8 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Catch-all to send root traffic directly to login */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Landing Page */}
+          <Route path="/" element={<Landing />} />
 
           {/* Public Auth Routes */}
           <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
@@ -40,7 +41,7 @@ function App() {
           <Route path="/reset-password" element={<AuthLayout><ResetPassword /></AuthLayout>} />
 
           {/* Protected Private Routes with Sidebar Shell */}
-          <Route element={<Layout />}>
+          <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/fleet" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER']}><Fleet /></ProtectedRoute>} />
             <Route path="/drivers" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER', 'SAFETY_OFFICER']}><Drivers /></ProtectedRoute>} />

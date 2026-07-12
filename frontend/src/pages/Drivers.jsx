@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Edit2, Trash2, Search, X } from 'lucide-react';
+import { Search } from 'lucide-react';
+import PageLayout from '../components/app/PageLayout';
 import StatusPill from '../components/StatusPill';
 
-const Drivers = () => {
+export default function Drivers() {
   const [drivers, setDrivers] = useState([]);
   const [filteredDrivers, setFilteredDrivers] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [currentDriver, setCurrentDriver] = useState(null);
+  const [selectedAsset, setSelectedAsset] = useState(null);
+
   const [formData, setFormData] = useState({
     name: '',
     licenseNumber: '',
@@ -58,10 +59,10 @@ const Drivers = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const openModal = (driver = null) => {
+  const selectDriver = (driver) => {
     setError('');
+    setSelectedAsset(driver);
     if (driver) {
-      setCurrentDriver(driver);
       setFormData({
         name: driver.name,
         licenseNumber: driver.licenseNumber,
@@ -71,7 +72,6 @@ const Drivers = () => {
         status: driver.status
       });
     } else {
-      setCurrentDriver(null);
       setFormData({
         name: '',
         licenseNumber: '',
@@ -81,7 +81,6 @@ const Drivers = () => {
         status: 'AVAILABLE'
       });
     }
-    setShowModal(true);
   };
 
   const handleSubmit = async (e) => {
@@ -91,28 +90,15 @@ const Drivers = () => {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
-      if (currentDriver) {
-        await axios.put(`http://localhost:3000/api/drivers/${currentDriver.id}`, formData, config);
+      if (selectedAsset && selectedAsset.id) {
+        await axios.put(`http://localhost:3000/api/drivers/${selectedAsset.id}`, formData, config);
       } else {
         await axios.post('http://localhost:3000/api/drivers', formData, config);
       }
-      setShowModal(false);
+      selectDriver(null);
       fetchDrivers();
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to save driver');
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this driver?')) return;
-    try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3000/api/drivers/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchDrivers();
-    } catch (err) {
-      console.error('Failed to delete driver', err);
     }
   };
 
@@ -121,76 +107,131 @@ const Drivers = () => {
     return new Date(dateString) < new Date();
   };
 
+  const renderInspector = () => {
+    return (
+      <div className="p-6 flex flex-col h-full overflow-y-auto">
+        <h3 className="font-display font-medium text-lg mb-6">
+          {selectedAsset ? 'Edit Driver' : 'Register Driver'}
+        </h3>
+        
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 h-full min-h-min">
+          {error && <div className="mb-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm p-3 rounded-lg">{error}</div>}
+          
+          <div className="space-y-4 flex-1">
+            <div>
+              <label className="text-xs text-gray-400 mb-1 block">Full Name *</label>
+              <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white transition-all" placeholder="e.g. John Doe" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-400 mb-1 block">License Number *</label>
+              <input type="text" name="licenseNumber" value={formData.licenseNumber} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white transition-all" placeholder="e.g. DL-12345" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">Category</label>
+                <select name="licenseCategory" value={formData.licenseCategory} onChange={handleInputChange} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all">
+                  <option value="LMV">LMV (Light)</option>
+                  <option value="HMV">HMV (Heavy)</option>
+                  <option value="CDL">CDL (Commercial)</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">Expiry *</label>
+                <input type="date" name="licenseExpiryDate" value={formData.licenseExpiryDate} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white transition-all" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">Contact</label>
+                <input type="text" name="contactNumber" value={formData.contactNumber} onChange={handleInputChange} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white transition-all" placeholder="e.g. +1 234 567" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">Status</label>
+                <select name="status" value={formData.status} onChange={handleInputChange} disabled={selectedAsset && selectedAsset.status === 'ON_TRIP'} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all disabled:opacity-50">
+                  {!selectedAsset && <option value="AVAILABLE">Available</option>}
+                  {selectedAsset && selectedAsset.status === 'ON_TRIP' && <option value="ON_TRIP">On Trip</option>}
+                  {selectedAsset && selectedAsset.status !== 'ON_TRIP' && (
+                    <>
+                      <option value="AVAILABLE">Available</option>
+                      <option value="OFF_DUTY">Off Duty</option>
+                      <option value="SUSPENDED">Suspended</option>
+                    </>
+                  )}
+                </select>
+              </div>
+            </div>
+
+            {selectedAsset && (
+              <div className="pt-4 mt-4 border-t border-white/10">
+                <button type="button" onClick={() => selectDriver(null)} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  ← Back to Create New
+                </button>
+              </div>
+            )}
+          </div>
+
+          <button type="submit" className="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2.5 rounded-lg transition-colors mt-8 border border-white/10">
+            {selectedAsset ? 'Save Changes' : 'Register Driver'}
+          </button>
+        </form>
+      </div>
+    );
+  };
+
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Driver Profiles</h1>
-          <p className="text-gray-400 text-sm mt-1">Manage personnel, licenses, and safety records</p>
+    <PageLayout inspector={renderInspector()}>
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-2 shrink-0">
+          <div className="flex items-center gap-6">
+            <div className="text-lg font-display font-medium text-white border-b-2 border-brand-accent pb-2 -mb-[9px]">
+              Drivers
+            </div>
+          </div>
+          
+          <div className="flex gap-2 relative z-20">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input type="text" placeholder="Search..." className="pl-8 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.search} onChange={(e) => setFilters({...filters, search: e.target.value})} />
+            </div>
+            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.status} onChange={(e) => setFilters({...filters, status: e.target.value})}>
+              <option value="">All Statuses</option>
+              <option value="AVAILABLE">Available</option>
+              <option value="ON_TRIP">On Trip</option>
+              <option value="OFF_DUTY">Off Duty</option>
+              <option value="SUSPENDED">Suspended</option>
+            </select>
+          </div>
         </div>
-        <button 
-          onClick={() => openModal()}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
-        >
-          <Plus className="w-5 h-5 mr-2" /> Add Driver
-        </button>
-      </div>
 
-      {/* Filters */}
-      <div className="bg-[#1e293b] p-4 rounded-xl border border-gray-700 mb-6 flex flex-wrap gap-4 items-center">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <input 
-            type="text" 
-            placeholder="Search name or license..."
-            className="w-full pl-9 pr-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 text-white text-sm"
-            value={filters.search}
-            onChange={(e) => setFilters({...filters, search: e.target.value})}
-          />
-        </div>
-        <select 
-          className="bg-[#0f172a] border border-gray-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
-          value={filters.status}
-          onChange={(e) => setFilters({...filters, status: e.target.value})}
-        >
-          <option value="">All Statuses</option>
-          <option value="AVAILABLE">Available</option>
-          <option value="ON_TRIP">On Trip</option>
-          <option value="OFF_DUTY">Off Duty</option>
-          <option value="SUSPENDED">Suspended</option>
-        </select>
-      </div>
-
-      {/* Table */}
-      <div className="bg-[#1e293b] rounded-xl border border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-300">
-            <thead className="bg-[#0f172a] text-gray-400 text-xs uppercase">
+        <div className="bg-[#141416] border border-white/10 rounded-xl overflow-hidden flex-1 overflow-y-auto">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="bg-white/5 text-gray-400 sticky top-0 z-10">
               <tr>
-                <th className="px-6 py-4 font-medium">Name</th>
-                <th className="px-6 py-4 font-medium">License Number</th>
-                <th className="px-6 py-4 font-medium">Category</th>
-                <th className="px-6 py-4 font-medium">Expiry Date</th>
-                <th className="px-6 py-4 font-medium">Contact</th>
-                <th className="px-6 py-4 font-medium">Safety Score</th>
-                <th className="px-6 py-4 font-medium">Status</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                <th className="px-6 py-3 font-medium">Name</th>
+                <th className="px-6 py-3 font-medium">License</th>
+                <th className="px-6 py-3 font-medium">Category</th>
+                <th className="px-6 py-3 font-medium">Expiry Date</th>
+                <th className="px-6 py-3 font-medium">Contact</th>
+                <th className="px-6 py-3 font-medium">Safety Score</th>
+                <th className="px-6 py-3 font-medium">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700">
+            <tbody className="divide-y divide-white/5 text-gray-300">
               {filteredDrivers.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
-                    No drivers found matching your criteria.
-                  </td>
+                  <td colSpan="7" className="px-6 py-8 text-center text-gray-500">No drivers found.</td>
                 </tr>
               ) : (
                 filteredDrivers.map(driver => {
                   const expired = isExpired(driver.licenseExpiryDate);
                   return (
-                    <tr key={driver.id} className="hover:bg-[#334155] transition-colors">
+                    <tr 
+                      key={driver.id} 
+                      onClick={() => selectDriver(driver)}
+                      className={`hover:bg-white/[0.02] cursor-pointer transition-colors ${selectedAsset?.id === driver.id ? 'bg-white/[0.04]' : ''}`}
+                    >
                       <td className="px-6 py-4 font-medium text-white">{driver.name}</td>
-                      <td className="px-6 py-4">{driver.licenseNumber}</td>
+                      <td className="px-6 py-4 text-gray-400">{driver.licenseNumber}</td>
                       <td className="px-6 py-4">{driver.licenseCategory || '-'}</td>
                       <td className="px-6 py-4">
                         <span className={expired ? 'text-red-400 font-semibold' : ''}>
@@ -203,14 +244,6 @@ const Drivers = () => {
                       <td className="px-6 py-4">
                         <StatusPill status={driver.status} />
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <button onClick={() => openModal(driver)} className="text-gray-400 hover:text-white mr-3 transition-colors">
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => handleDelete(driver.id)} className="text-gray-400 hover:text-red-400 transition-colors">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
                     </tr>
                   )
                 })
@@ -219,131 +252,6 @@ const Drivers = () => {
           </table>
         </div>
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1e293b] rounded-xl border border-gray-700 w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="flex justify-between items-center p-6 border-b border-gray-700">
-              <h3 className="text-xl font-bold text-white">
-                {currentDriver ? 'Edit Driver' : 'Register Driver'}
-              </h3>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white transition-colors">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6">
-              {error && (
-                <div className="mb-4 bg-red-500/10 border border-red-500/50 text-red-500 text-sm px-4 py-3 rounded-lg">
-                  {error}
-                </div>
-              )}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Full Name *</label>
-                  <input 
-                    type="text" 
-                    name="name" 
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                    placeholder="e.g. John Doe"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">License Number *</label>
-                  <input 
-                    type="text" 
-                    name="licenseNumber" 
-                    value={formData.licenseNumber}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                    placeholder="e.g. DL-12345"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Category</label>
-                    <select 
-                      name="licenseCategory" 
-                      value={formData.licenseCategory}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                    >
-                      <option value="LMV">LMV (Light)</option>
-                      <option value="HMV">HMV (Heavy)</option>
-                      <option value="CDL">CDL (Commercial)</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Expiry Date *</label>
-                    <input 
-                      type="date" 
-                      name="licenseExpiryDate" 
-                      value={formData.licenseExpiryDate}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Contact Number</label>
-                    <input 
-                      type="text" 
-                      name="contactNumber" 
-                      value={formData.contactNumber}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                      placeholder="+1 234 567 8900"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Status</label>
-                    <select 
-                      name="status" 
-                      value={formData.status}
-                      onChange={handleInputChange}
-                      disabled={currentDriver && currentDriver.status === 'ON_TRIP'}
-                      className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 disabled:opacity-50"
-                    >
-                      {!currentDriver && <option value="AVAILABLE">Available</option>}
-                      {currentDriver && currentDriver.status === 'ON_TRIP' && <option value="ON_TRIP">On Trip</option>}
-                      {currentDriver && currentDriver.status !== 'ON_TRIP' && (
-                        <>
-                          <option value="AVAILABLE">Available</option>
-                          <option value="OFF_DUTY">Off Duty</option>
-                          <option value="SUSPENDED">Suspended</option>
-                        </>
-                      )}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-end gap-3">
-                <button 
-                  type="button" 
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 bg-transparent text-gray-300 hover:text-white transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
-                >
-                  {currentDriver ? 'Save Changes' : 'Register Driver'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+    </PageLayout>
   );
-};
-
-export default Drivers;
+}
