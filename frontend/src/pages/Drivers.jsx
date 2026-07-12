@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Search } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
 import StatusPill from '../components/StatusPill';
+import CustomSelect from '../components/CustomSelect';
 
 export default function Drivers() {
   const [drivers, setDrivers] = useState([]);
@@ -129,11 +130,17 @@ export default function Drivers() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Category</label>
-                <select name="licenseCategory" value={formData.licenseCategory} onChange={handleInputChange} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all">
-                  <option value="LMV">LMV (Light)</option>
-                  <option value="HMV">HMV (Heavy)</option>
-                  <option value="CDL">CDL (Commercial)</option>
-                </select>
+                <CustomSelect
+                  name="licenseCategory"
+                  value={formData.licenseCategory}
+                  onChange={handleInputChange}
+                  placeholder="Select category..."
+                  options={[
+                    { value: 'LMV', label: 'LMV (Light)' },
+                    { value: 'HMV', label: 'HMV (Heavy)' },
+                    { value: 'CDL', label: 'CDL (Commercial)' }
+                  ]}
+                />
               </div>
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Expiry *</label>
@@ -147,17 +154,25 @@ export default function Drivers() {
               </div>
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Status</label>
-                <select name="status" value={formData.status} onChange={handleInputChange} disabled={selectedAsset && selectedAsset.status === 'ON_TRIP'} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all disabled:opacity-50">
-                  {!selectedAsset && <option value="AVAILABLE">Available</option>}
-                  {selectedAsset && selectedAsset.status === 'ON_TRIP' && <option value="ON_TRIP">On Trip</option>}
-                  {selectedAsset && selectedAsset.status !== 'ON_TRIP' && (
-                    <>
-                      <option value="AVAILABLE">Available</option>
-                      <option value="OFF_DUTY">Off Duty</option>
-                      <option value="SUSPENDED">Suspended</option>
-                    </>
-                  )}
-                </select>
+                <div className={selectedAsset && selectedAsset.status === 'ON_TRIP' ? 'pointer-events-none opacity-50' : ''}>
+                  <CustomSelect
+                    name="status"
+                    value={formData.status}
+                    onChange={handleInputChange}
+                    placeholder="Select status..."
+                    options={
+                      !selectedAsset 
+                        ? [{ value: 'AVAILABLE', label: 'Available' }]
+                        : selectedAsset.status === 'ON_TRIP'
+                          ? [{ value: 'ON_TRIP', label: 'On Trip' }]
+                          : [
+                              { value: 'AVAILABLE', label: 'Available' },
+                              { value: 'OFF_DUTY', label: 'Off Duty' },
+                              { value: 'SUSPENDED', label: 'Suspended' }
+                            ]
+                    }
+                  />
+                </div>
               </div>
             </div>
 
@@ -193,13 +208,21 @@ export default function Drivers() {
               <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input type="text" placeholder="Search..." className="pl-8 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.search} onChange={(e) => setFilters({...filters, search: e.target.value})} />
             </div>
-            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.status} onChange={(e) => setFilters({...filters, status: e.target.value})}>
-              <option value="">All Statuses</option>
-              <option value="AVAILABLE">Available</option>
-              <option value="ON_TRIP">On Trip</option>
-              <option value="OFF_DUTY">Off Duty</option>
-              <option value="SUSPENDED">Suspended</option>
-            </select>
+            <div className="w-36">
+              <CustomSelect 
+                name="status"
+                value={filters.status} 
+                onChange={(e) => setFilters({...filters, status: e.target.value})}
+                placeholder="All Statuses"
+                options={[
+                  { value: '', label: 'All Statuses' },
+                  { value: 'AVAILABLE', label: 'Available' },
+                  { value: 'ON_TRIP', label: 'On Trip' },
+                  { value: 'OFF_DUTY', label: 'Off Duty' },
+                  { value: 'SUSPENDED', label: 'Suspended' }
+                ]}
+              />
+            </div>
           </div>
         </div>
 
