@@ -9,6 +9,7 @@ const tripRoutes = require('./src/routes/tripRoutes');
 const maintenanceRoutes = require('./src/routes/maintenanceRoutes');
 const financeRoutes = require('./src/routes/financeRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
+const analyticsRoutes = require('./src/routes/analyticsRoutes');
 const { authenticateToken } = require('./src/middlewares/authMiddleware');
 
 const app = express();
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes);
 
 // Protected Routes
 app.use('/api/dashboard', authenticateToken, dashboardRoutes);
+app.use('/api/analytics', authenticateToken, analyticsRoutes);
 app.use('/api/vehicles', authenticateToken, vehicleRoutes);
 app.use('/api/drivers', authenticateToken, driverRoutes);
 app.use('/api/trips', authenticateToken, tripRoutes);

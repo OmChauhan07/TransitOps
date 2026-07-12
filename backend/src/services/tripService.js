@@ -50,7 +50,7 @@ const tripService = {
     });
   },
 
-  async complete(tripId, actualOdometer, fuelConsumed) {
+  async complete(tripId, actualDistance, fuelConsumed, revenue) {
     return await prisma.$transaction(async (tx) => {
       const trip = await tx.trip.findUnique({ where: { id: tripId } });
       if (!trip) throw new Error('Trip not found');
@@ -61,8 +61,10 @@ const tripService = {
         where: { id: tripId },
         data: {
           status: 'COMPLETED',
-          actualOdometer: parseFloat(actualOdometer) || null,
+          actualDistance: parseFloat(actualDistance) || null,
           fuelConsumed: parseFloat(fuelConsumed) || null,
+          revenue: parseFloat(revenue) || null,
+          completedAt: new Date(),
         },
       });
 
@@ -72,7 +74,7 @@ const tripService = {
         where: { id: trip.vehicleId },
         data: {
           status: 'AVAILABLE',
-          odometer: currentVehicle.odometer + (parseFloat(actualOdometer) || 0),
+          odometer: currentVehicle.odometer + (parseFloat(actualDistance) || 0),
         },
       });
 

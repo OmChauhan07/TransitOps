@@ -55,8 +55,8 @@ const dispatchTrip = async (req, res) => {
 const completeTrip = async (req, res) => {
   try {
     const { id } = req.params;
-    const { actualOdometer, fuelConsumed } = req.body;
-    const trip = await complete(id, actualOdometer, fuelConsumed);
+    const { actualDistance, fuelConsumed, revenue } = req.body;
+    const trip = await complete(id, actualDistance, fuelConsumed, revenue);
     res.json(trip);
   } catch (error) {
     res.status(400).json({ error: error.message });

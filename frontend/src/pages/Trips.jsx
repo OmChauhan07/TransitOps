@@ -26,8 +26,9 @@ const Trips = () => {
   });
 
   const [completeData, setCompleteData] = useState({
-    actualOdometer: '',
-    fuelConsumed: ''
+    actualDistance: '',
+    fuelConsumed: '',
+    revenue: ''
   });
 
   const [error, setError] = useState('');
@@ -140,7 +141,7 @@ const Trips = () => {
 
   const openCompleteModal = (trip) => {
     setActiveTrip(trip);
-    setCompleteData({ actualOdometer: '', fuelConsumed: '' });
+    setCompleteData({ actualDistance: '', fuelConsumed: '', revenue: '' });
     setShowCompleteModal(true);
   };
 
@@ -417,11 +418,11 @@ const Trips = () => {
               )}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Actual Odometer (km) *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Actual Distance (km) *</label>
                   <input 
                     type="number" 
-                    value={completeData.actualOdometer}
-                    onChange={(e) => setCompleteData({...completeData, actualOdometer: e.target.value})}
+                    value={completeData.actualDistance}
+                    onChange={(e) => setCompleteData({...completeData, actualDistance: e.target.value})}
                     required
                     min="0"
                     className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
@@ -433,6 +434,17 @@ const Trips = () => {
                     type="number" 
                     value={completeData.fuelConsumed}
                     onChange={(e) => setCompleteData({...completeData, fuelConsumed: e.target.value})}
+                    required
+                    min="0"
+                    className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Trip Revenue ($) *</label>
+                  <input 
+                    type="number" 
+                    value={completeData.revenue}
+                    onChange={(e) => setCompleteData({...completeData, revenue: e.target.value})}
                     required
                     min="0"
                     className="w-full px-4 py-2 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
