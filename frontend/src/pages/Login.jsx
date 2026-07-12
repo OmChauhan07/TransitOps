@@ -32,14 +32,14 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Account Login</h2>
+    <div className="bg-slate-800 p-8 rounded-xl shadow-xl border border-slate-700 w-full max-w-md">
+      <h2 className="text-2xl font-bold mb-6 text-center text-slate-100">Account Login</h2>
       
       {error && <div className="bg-red-50 text-red-500 p-3 rounded mb-4 text-sm">{error}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
           <input
             type="email"
             required
@@ -51,8 +51,8 @@ const Login = () => {
         
         <div>
           <div className="flex justify-between items-center mb-1">
-            <label className="text-sm font-medium text-gray-700">Password</label>
-            <Link to="/forgot-password" className="text-xs text-blue-600 hover:underline">
+            <label className="text-sm font-medium text-slate-300">Password</label>
+            <Link to="/forgot-password" className="text-xs text-blue-500 hover:text-blue-400 hover:underline">
               Forgot Password?
             </Link>
           </div>
@@ -74,8 +74,8 @@ const Login = () => {
         </button>
       </form>
 
-      <p className="mt-4 text-sm text-center text-gray-600">
-        Don't have an account? <Link to="/register" className="text-blue-600 hover:underline">Register</Link>
+      <p className="mt-4 text-sm text-center text-slate-400">
+        Don't have an account? <Link to="/register" className="text-blue-500 hover:text-blue-400 hover:underline">Register</Link>
       </p>
     </div>
   );

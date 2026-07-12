@@ -25,9 +25,9 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h2 className="text-2xl font-bold mb-2 text-center text-gray-800">Forgot Password</h2>
-      <p className="text-sm text-center text-gray-600 mb-6">
+    <div className="bg-slate-800 p-8 rounded-lg shadow-md w-full max-w-md">
+      <h2 className="text-2xl font-bold mb-2 text-center text-slate-100">Forgot Password</h2>
+      <p className="text-sm text-center text-slate-400 mb-6">
         Enter your email and we'll send you a 6-digit reset code.
       </p>
       
@@ -35,7 +35,7 @@ const ForgotPassword = () => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
           <input
             type="email"
             required
@@ -54,8 +54,8 @@ const ForgotPassword = () => {
         </button>
       </form>
 
-      <p className="mt-4 text-sm text-center text-gray-600">
-        Remember your password? <Link to="/login" className="text-blue-600 hover:underline">Log in</Link>
+      <p className="mt-4 text-sm text-center text-slate-400">
+        Remember your password? <Link to="/login" className="text-blue-500 hover:text-blue-400 hover:underline">Log in</Link>
       </p>
     </div>
   );

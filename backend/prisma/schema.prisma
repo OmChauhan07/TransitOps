@@ -11,9 +11,18 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  FLEET_MANAGER
+  DRIVER
+  SAFETY_OFFICER
+  FINANCIAL_ANALYST
+}
+
 model User {
   id                String    @id @default(uuid())
   email             String    @unique
+  name              String    @default("Unknown")
+  role              Role      @default(DRIVER)
   password          String
   isVerified        Boolean   @default(false)
   otp               String?   
@@ -21,4 +30,66 @@ model User {
   resetOtp          String?   
   resetOtpExpiresAt DateTime? 
   createdAt         DateTime  @default(now())
+}
+
+model Vehicle {
+  id             String           @id @default(uuid())
+  plateNumber    String           @unique
+  make           String
+  model          String
+  year           Int
+  capacity       Float
+  status         String           @default("AVAILABLE") // AVAILABLE, IN_USE, MAINTENANCE
+  trips          Trip[]
+  maintenanceLogs MaintenanceLog[]
+  fuelLogs       FuelLog[]
+  createdAt      DateTime         @default(now())
+}
+
+model Driver {
+  id            String    @id @default(uuid())
+  name          String
+  licenseNumber String    @unique
+  licenseExpiry DateTime
+  status        String    @default("AVAILABLE") // AVAILABLE, ON_TRIP, OFF_DUTY
+  trips         Trip[]
+  createdAt     DateTime  @default(now())
+}
+
+model Trip {
+  id            String    @id @default(uuid())
+  vehicleId     String
+  driverId      String
+  startLocation String
+  endLocation   String
+  status        String    @default("PENDING") // PENDING, ON_TRIP, COMPLETED
+  cargoWeight   Float
+  vehicle       Vehicle   @relation(fields: [vehicleId], references: [id])
+  driver        Driver    @relation(fields: [driverId], references: [id])
+  createdAt     DateTime  @default(now())
+}
+
+model MaintenanceLog {
+  id          String   @id @default(uuid())
+  vehicleId   String
+  description String
+  cost        Float
+  date        DateTime @default(now())
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+}
+
+model FuelLog {
+  id        String   @id @default(uuid())
+  vehicleId String
+  gallons   Float
+  cost      Float
+  date      DateTime @default(now())
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+}
+
+model Expense {
+  id       String   @id @default(uuid())
+  category String
+  amount   Float
+  date     DateTime @default(now())
 }

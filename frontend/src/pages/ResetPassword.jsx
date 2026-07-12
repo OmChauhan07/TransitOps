@@ -41,9 +41,9 @@ const ResetPassword = () => {
   if (!email) return null;
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h2 className="text-2xl font-bold mb-2 text-center text-gray-800">Set New Password</h2>
-      <p className="text-sm text-center text-gray-600 mb-6">
+    <div className="bg-slate-800 p-8 rounded-lg shadow-md w-full max-w-md">
+      <h2 className="text-2xl font-bold mb-2 text-center text-slate-100">Set New Password</h2>
+      <p className="text-sm text-center text-slate-400 mb-6">
         Code sent to <strong>{email}</strong>
       </p>
       
@@ -52,7 +52,7 @@ const ResetPassword = () => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">6-Digit Reset Code</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">6-Digit Reset Code</label>
           <input
             type="text"
             required
@@ -64,7 +64,7 @@ const ResetPassword = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">New Password</label>
           <input
             type="password"
             required

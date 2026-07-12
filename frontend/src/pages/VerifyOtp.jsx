@@ -40,9 +40,9 @@ const VerifyOtp = () => {
   if (!email) return null; // Prevents flashing before redirect
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h2 className="text-2xl font-bold mb-2 text-center text-gray-800">Verify Your Email</h2>
-      <p className="text-sm text-center text-gray-600 mb-6">
+    <div className="bg-slate-800 p-8 rounded-lg shadow-md w-full max-w-md">
+      <h2 className="text-2xl font-bold mb-2 text-center text-slate-100">Verify Your Email</h2>
+      <p className="text-sm text-center text-slate-400 mb-6">
         We sent a 6-digit code to <strong>{email}</strong>
       </p>
       

@@ -5,9 +5,8 @@ const { sendOTP } = require('../config/mailer');
 const { sendPasswordResetEmail } = require('../config/mailer');
 
 
-// Handle User Registration
 const register = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -25,8 +24,8 @@ const register = async (req, res) => {
     // Upsert: Create user if they don't exist, or update OTP if they exist but aren't verified yet
     const user = await prisma.user.upsert({
       where: { email },
-      update: { password: hashedPassword, otp, otpExpiresAt },
-      create: { email, password: hashedPassword, otp, otpExpiresAt },
+      update: { name, password: hashedPassword, otp, otpExpiresAt },
+      create: { name, email, password: hashedPassword, otp, otpExpiresAt },
     });
 
     // Send the email
@@ -80,12 +79,21 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email, name: user.name, role: user.role },
       process.env.JWT_SECRET || 'fallback_secret',
       { expiresIn: '2h' }
     );
 
-    res.json({ message: 'Login successful', token });
+    res.json({ 
+      message: 'Login successful', 
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role
+      } 
+    });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error.' });
   }
