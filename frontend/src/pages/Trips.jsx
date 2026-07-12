@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Play, Check, XCircle, Trash2, Search, X } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
 import StatusPill from '../components/StatusPill';
 import CustomSelect from '../components/CustomSelect';
+import { AuthContext } from '../context/AuthContext';
 
 export default function Trips() {
+  const { user } = useContext(AuthContext);
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
   
@@ -95,8 +97,20 @@ export default function Trips() {
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    let finalFormData = { ...formData };
+    if (user?.role === 'DRIVER') {
+      const myDriver = availableDrivers.find(d => d.name === user.name);
+      if (myDriver) {
+        finalFormData.driverId = myDriver.id;
+      } else {
+        setError('No driver profile found matching your account name. Please contact admin.');
+        return;
+      }
+    }
+
     try {
-      await axios.post('http://localhost:3000/api/trips', formData, getHeaders());
+      await axios.post('http://localhost:3000/api/trips', finalFormData, getHeaders());
       setFormData({
         source: '', destination: '', cargoWeight: '', plannedDistance: '', vehicleId: '', driverId: ''
       });
@@ -233,19 +247,21 @@ export default function Trips() {
                 ]}
               />
             </div>
-            <div>
-              <label className="text-xs text-gray-400 mb-1 block">Driver *</label>
-              <CustomSelect 
-                name="driverId" 
-                value={formData.driverId} 
-                onChange={handleInputChange} 
-                placeholder="Select driver..."
-                options={[
-                  { value: '', label: 'Select driver...' },
-                  ...availableDrivers.map(d => ({ value: d.id, label: d.name }))
-                ]}
-              />
-            </div>
+            {user?.role !== 'DRIVER' && (
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">Driver *</label>
+                <CustomSelect 
+                  name="driverId" 
+                  value={formData.driverId} 
+                  onChange={handleInputChange} 
+                  placeholder="Select driver..."
+                  options={[
+                    { value: '', label: 'Select driver...' },
+                    ...availableDrivers.map(d => ({ value: d.id, label: d.name }))
+                  ]}
+                />
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Cargo (kg) *</label>
