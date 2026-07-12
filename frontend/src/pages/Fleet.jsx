@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Search } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
 import StatusPill from '../components/StatusPill';
+import CustomSelect from '../components/CustomSelect';
 
 export default function Fleet() {
   const [vehicles, setVehicles] = useState([]);
@@ -127,20 +128,37 @@ export default function Fleet() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Type *</label>
-                <select name="type" value={formData.type} onChange={handleInputChange} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all">
-                  <option value="Van">Van</option>
-                  <option value="Truck">Truck</option>
-                  <option value="Car">Car</option>
-                  <option value="Motorcycle">Motorcycle</option>
-                </select>
+                <CustomSelect
+                  name="type"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                  placeholder="Select type..."
+                  options={[
+                    { value: 'Van', label: 'Van' },
+                    { value: 'Truck', label: 'Truck' },
+                    { value: 'Car', label: 'Car' },
+                    { value: 'Motorcycle', label: 'Motorcycle' }
+                  ]}
+                />
               </div>
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Status</label>
-                <select name="status" value={formData.status} onChange={handleInputChange} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-brand-accent outline-none text-white appearance-none transition-all disabled:opacity-50">
-                  {!selectedAsset && <option value="AVAILABLE">Available</option>}
-                  {selectedAsset && <option value={selectedAsset.status}>{selectedAsset.status.replace('_', ' ')}</option>}
-                  {selectedAsset && selectedAsset.status !== 'RETIRED' && <option value="RETIRED">Retired</option>}
-                </select>
+                <CustomSelect
+                  name="status"
+                  value={formData.status}
+                  onChange={handleInputChange}
+                  placeholder="Select status..."
+                  options={[
+                    ...(selectedAsset 
+                        ? [{ value: selectedAsset.status, label: selectedAsset.status.replace('_', ' ') }] 
+                        : [{ value: 'AVAILABLE', label: 'Available' }]
+                    ),
+                    ...(selectedAsset && selectedAsset.status !== 'RETIRED' 
+                        ? [{ value: 'RETIRED', label: 'Retired' }] 
+                        : []
+                    )
+                  ]}
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -186,19 +204,35 @@ export default function Fleet() {
               <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input type="text" placeholder="Search..." className="pl-8 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.search} onChange={(e) => setFilters({...filters, search: e.target.value})} />
             </div>
-            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.type} onChange={(e) => setFilters({...filters, type: e.target.value})}>
-              <option value="">All Types</option>
-              <option value="Van">Van</option>
-              <option value="Truck">Truck</option>
-              <option value="Car">Car</option>
-            </select>
-            <select className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-brand-accent text-white" value={filters.status} onChange={(e) => setFilters({...filters, status: e.target.value})}>
-              <option value="">All Statuses</option>
-              <option value="AVAILABLE">Available</option>
-              <option value="ON_TRIP">On Trip</option>
-              <option value="IN_SHOP">In Shop</option>
-              <option value="RETIRED">Retired</option>
-            </select>
+            <div className="w-32">
+              <CustomSelect 
+                name="type"
+                value={filters.type} 
+                onChange={(e) => setFilters({...filters, type: e.target.value})}
+                placeholder="All Types"
+                options={[
+                  { value: '', label: 'All Types' },
+                  { value: 'Van', label: 'Van' },
+                  { value: 'Truck', label: 'Truck' },
+                  { value: 'Car', label: 'Car' }
+                ]}
+              />
+            </div>
+            <div className="w-36">
+              <CustomSelect 
+                name="status"
+                value={filters.status} 
+                onChange={(e) => setFilters({...filters, status: e.target.value})}
+                placeholder="All Statuses"
+                options={[
+                  { value: '', label: 'All Statuses' },
+                  { value: 'AVAILABLE', label: 'Available' },
+                  { value: 'ON_TRIP', label: 'On Trip' },
+                  { value: 'IN_SHOP', label: 'In Shop' },
+                  { value: 'RETIRED', label: 'Retired' }
+                ]}
+              />
+            </div>
           </div>
         </div>
 
