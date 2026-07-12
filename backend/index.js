@@ -5,6 +5,7 @@ require('dotenv').config();
 const authRoutes = require('./src/routes/authRoutes');
 const vehicleRoutes = require('./src/routes/vehicleRoutes');
 const driverRoutes = require('./src/routes/driverRoutes');
+const tripRoutes = require('./src/routes/tripRoutes');
 const { authenticateToken } = require('./src/middlewares/authMiddleware');
 
 const app = express();
@@ -18,6 +19,7 @@ app.use('/api/auth', authRoutes);
 // Protected Routes
 app.use('/api/vehicles', authenticateToken, vehicleRoutes);
 app.use('/api/drivers', authenticateToken, driverRoutes);
+app.use('/api/trips', authenticateToken, tripRoutes);
 
 const PORT = process.env.PORT || 3000;
 
