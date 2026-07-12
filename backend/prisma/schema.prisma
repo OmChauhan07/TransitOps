@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +6,10 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─────────────────────────────
+// Enums
+// ─────────────────────────────
+
 enum Role {
   FLEET_MANAGER
   DRIVER
@@ -18,78 +17,140 @@ enum Role {
   FINANCIAL_ANALYST
 }
 
+enum VehicleStatus {
+  AVAILABLE
+  ON_TRIP
+  IN_SHOP
+  RETIRED
+}
+
+enum DriverStatus {
+  AVAILABLE
+  ON_TRIP
+  OFF_DUTY
+  SUSPENDED
+}
+
+enum TripStatus {
+  DRAFT
+  DISPATCHED
+  COMPLETED
+  CANCELLED
+}
+
+enum MaintenanceStatus {
+  OPEN
+  CLOSED
+}
+
+enum ExpenseType {
+  TOLL
+  OTHER
+}
+
+// ─────────────────────────────
+// User — EXISTING MODEL, additive changes only
+// ─────────────────────────────
+
 model User {
   id                String    @id @default(uuid())
   email             String    @unique
-  name              String    @default("Unknown")
-  role              Role      @default(DRIVER)
   password          String
   isVerified        Boolean   @default(false)
-  otp               String?   
-  otpExpiresAt      DateTime? 
-  resetOtp          String?   
-  resetOtpExpiresAt DateTime? 
+  otp               String?
+  otpExpiresAt      DateTime?
+  resetOtp          String?
+  resetOtpExpiresAt DateTime?
   createdAt         DateTime  @default(now())
+
+  // --- added in Phase 1 for RBAC ---
+  name              String?
+  role              Role      @default(DRIVER)
 }
 
+// ─────────────────────────────
+// Core entities — new in this project
+// ─────────────────────────────
+
 model Vehicle {
-  id             String           @id @default(uuid())
-  plateNumber    String           @unique
-  make           String
-  model          String
-  year           Int
-  capacity       Float
-  status         String           @default("AVAILABLE") // AVAILABLE, IN_USE, MAINTENANCE
-  trips          Trip[]
-  maintenanceLogs MaintenanceLog[]
-  fuelLogs       FuelLog[]
-  createdAt      DateTime         @default(now())
+  id                 String        @id @default(uuid())
+  registrationNumber String        @unique
+  name               String
+  type               String
+  maxLoadCapacity    Float
+  odometer           Float         @default(0)
+  acquisitionCost    Float
+  status             VehicleStatus @default(AVAILABLE)
+  createdAt          DateTime      @default(now())
+
+  trips              Trip[]
+  maintenanceLogs    MaintenanceLog[]
+  fuelLogs           FuelLog[]
+  expenses           Expense[]
 }
 
 model Driver {
-  id            String    @id @default(uuid())
-  name          String
-  licenseNumber String    @unique
-  licenseExpiry DateTime
-  status        String    @default("AVAILABLE") // AVAILABLE, ON_TRIP, OFF_DUTY
-  trips         Trip[]
-  createdAt     DateTime  @default(now())
+  id                String       @id @default(uuid())
+  name              String
+  licenseNumber     String       @unique
+  licenseCategory   String
+  licenseExpiryDate DateTime
+  contactNumber     String
+  safetyScore       Float        @default(100)
+  status            DriverStatus @default(AVAILABLE)
+  createdAt         DateTime     @default(now())
+
+  trips             Trip[]
 }
 
 model Trip {
-  id            String    @id @default(uuid())
-  vehicleId     String
-  driverId      String
-  startLocation String
-  endLocation   String
-  status        String    @default("PENDING") // PENDING, ON_TRIP, COMPLETED
-  cargoWeight   Float
-  vehicle       Vehicle   @relation(fields: [vehicleId], references: [id])
-  driver        Driver    @relation(fields: [driverId], references: [id])
-  createdAt     DateTime  @default(now())
+  id              String     @id @default(uuid())
+  source          String
+  destination     String
+  cargoWeight     Float
+  plannedDistance Float
+  actualDistance  Float?
+  fuelConsumed    Float?
+  revenue         Float?     // pending decision in design.md section 3 — needed for ROI
+  status          TripStatus @default(DRAFT)
+  dispatchedAt    DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime   @default(now())
+
+  vehicleId       String
+  vehicle         Vehicle    @relation(fields: [vehicleId], references: [id])
+  driverId        String
+  driver          Driver     @relation(fields: [driverId], references: [id])
 }
 
 model MaintenanceLog {
-  id          String   @id @default(uuid())
-  vehicleId   String
+  id          String            @id @default(uuid())
   description String
   cost        Float
-  date        DateTime @default(now())
-  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  status      MaintenanceStatus @default(OPEN)
+  openedAt    DateTime          @default(now())
+  closedAt    DateTime?
+
+  vehicleId   String
+  vehicle     Vehicle           @relation(fields: [vehicleId], references: [id])
 }
 
 model FuelLog {
   id        String   @id @default(uuid())
-  vehicleId String
-  gallons   Float
+  liters    Float
   cost      Float
   date      DateTime @default(now())
+
+  vehicleId String
   vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
 }
 
 model Expense {
-  id       String   @id @default(uuid())
-  category String
-  amount   Float
-  date     DateTime @default(now())
+  id        String      @id @default(uuid())
+  type      ExpenseType
+  amount    Float
+  date      DateTime    @default(now())
+
+  vehicleId String
+  vehicle   Vehicle     @relation(fields: [vehicleId], references: [id])
 }

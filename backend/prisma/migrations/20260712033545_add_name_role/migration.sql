@@ -1,6 +1,0 @@
--- CreateEnum
-CREATE TYPE "Role" AS ENUM ('ADMIN', 'MANAGER', 'DISPATCHER', 'DRIVER');
-
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "name" TEXT NOT NULL DEFAULT 'Unknown',
-ADD COLUMN     "role" "Role" NOT NULL DEFAULT 'DRIVER';
