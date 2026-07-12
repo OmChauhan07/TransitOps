@@ -12,6 +12,7 @@ import ResetPassword from './pages/ResetPassword';
 import Fleet from './pages/Fleet';
 import Drivers from './pages/Drivers';
 import Trips from './pages/Trips';
+import Maintenance from './pages/Maintenance';
 
 // Wrapper for public auth routes
 const AuthLayout = ({ children }) => (
@@ -41,7 +42,7 @@ function App() {
             <Route path="/fleet" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER']}><Fleet /></ProtectedRoute>} />
             <Route path="/drivers" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER', 'SAFETY_OFFICER']}><Drivers /></ProtectedRoute>} />
             <Route path="/trips" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER', 'DRIVER']}><Trips /></ProtectedRoute>} />
-            <Route path="/maintenance" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER']}><div className="text-slate-100 p-8">Maintenance Logs Placeholder</div></ProtectedRoute>} />
+            <Route path="/maintenance" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER']}><Maintenance /></ProtectedRoute>} />
             <Route path="/expenses" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER', 'FINANCIAL_ANALYST']}><div className="text-slate-100 p-8">Fuel & Expenses Placeholder</div></ProtectedRoute>} />
             <Route path="/analytics" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER', 'FINANCIAL_ANALYST', 'SAFETY_OFFICER']}><div className="text-slate-100 p-8">Analytics Dashboard Placeholder</div></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute allowedRoles={['FLEET_MANAGER', 'DRIVER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST']}><div className="text-slate-100 p-8">Settings Placeholder</div></ProtectedRoute>} />

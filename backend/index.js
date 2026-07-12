@@ -6,6 +6,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const vehicleRoutes = require('./src/routes/vehicleRoutes');
 const driverRoutes = require('./src/routes/driverRoutes');
 const tripRoutes = require('./src/routes/tripRoutes');
+const maintenanceRoutes = require('./src/routes/maintenanceRoutes');
 const { authenticateToken } = require('./src/middlewares/authMiddleware');
 
 const app = express();
@@ -20,6 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', authenticateToken, vehicleRoutes);
 app.use('/api/drivers', authenticateToken, driverRoutes);
 app.use('/api/trips', authenticateToken, tripRoutes);
+app.use('/api/maintenance', authenticateToken, maintenanceRoutes);
 
 const PORT = process.env.PORT || 3000;
 
