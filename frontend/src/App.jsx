@@ -31,14 +31,14 @@ function App() {
         <Routes>
           {/* Catch-all to send root traffic directly to login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
-          
+
           {/* Public Auth Routes */}
           <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
           <Route path="/verify-otp" element={<AuthLayout><VerifyOtp /></AuthLayout>} />
           <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
           <Route path="/forgot-password" element={<AuthLayout><ForgotPassword /></AuthLayout>} />
           <Route path="/reset-password" element={<AuthLayout><ResetPassword /></AuthLayout>} />
-          
+
           {/* Protected Private Routes with Sidebar Shell */}
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
