@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { Fuel, Receipt, DollarSign, Droplets, Wrench, Search } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
 import CustomSelect from '../components/CustomSelect';
@@ -26,17 +26,12 @@ export default function Expenses() {
     fetchData();
   }, []);
 
-  const getHeaders = () => {
-    const token = localStorage.getItem('token');
-    return { headers: { Authorization: `Bearer ${token}` } };
-  };
-
   const fetchData = async () => {
     try {
       const [logsRes, costsRes, vRes] = await Promise.all([
-        axios.get('http://localhost:3000/api/finance/logs', getHeaders()),
-        axios.get('http://localhost:3000/api/finance/costs', getHeaders()),
-        axios.get('http://localhost:3000/api/vehicles', getHeaders())
+        api.get('/finance/logs'),
+        api.get('/finance/costs'),
+        api.get('/vehicles')
       ]);
       setLogs(logsRes.data);
       setCosts(costsRes.data);
@@ -60,17 +55,17 @@ export default function Expenses() {
     setError('');
     try {
       if (formData.entryType === 'FUEL') {
-        await axios.post('http://localhost:3000/api/finance/fuel', {
+        await api.post('/finance/fuel', {
           vehicleId: formData.vehicleId,
           liters: formData.liters,
           cost: formData.amount
-        }, getHeaders());
+        });
       } else {
-        await axios.post('http://localhost:3000/api/finance/expense', {
+        await api.post('/finance/expense', {
           vehicleId: formData.vehicleId,
           type: formData.entryType, // TOLL or OTHER
           amount: formData.amount
-        }, getHeaders());
+        });
       }
 
       setFormData({ vehicleId: '', entryType: logType === 'FUEL' ? 'FUEL' : 'OTHER', amount: '', liters: '' });

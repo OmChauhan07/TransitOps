@@ -18,7 +18,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await api.post('/login', formData);
+      const response = await api.post('/auth/login', formData);
       login(response.data.token);
       navigate('/dashboard');
     } catch (err) {

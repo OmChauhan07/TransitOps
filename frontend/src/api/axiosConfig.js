@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+// Get base URL from environment or default to localhost
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const apiBaseUrl = `${rawBaseUrl.replace(/\/+$/, '')}/api`;
+
 // Create a base instance
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api/auth', // Pointing to your Express server
+  baseURL: apiBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },

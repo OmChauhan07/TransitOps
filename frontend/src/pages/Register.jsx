@@ -16,7 +16,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await api.post('/register', formData);
+      await api.post('/auth/register', formData);
       navigate('/verify-otp', { state: { email: formData.email } });
     } catch (err) {
       setError(err.response?.data?.error || 'Something went wrong. Please try again.');

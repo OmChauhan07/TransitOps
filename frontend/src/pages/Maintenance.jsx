@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { PenTool, CheckCircle, Search, Wrench } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
 import CustomSelect from '../components/CustomSelect';
@@ -27,14 +27,9 @@ export default function Maintenance() {
     applyFilters();
   }, [logs, filters]);
 
-  const getHeaders = () => {
-    const token = localStorage.getItem('token');
-    return { headers: { Authorization: `Bearer ${token}` } };
-  };
-
   const fetchLogs = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/maintenance', getHeaders());
+      const res = await api.get('/maintenance');
       setLogs(res.data);
     } catch (err) {
       console.error('Failed to fetch maintenance logs', err);
@@ -43,7 +38,7 @@ export default function Maintenance() {
 
   const fetchVehicles = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/vehicles', getHeaders());
+      const res = await api.get('/vehicles');
       setVehicles(res.data);
     } catch (err) {
       console.error('Failed to fetch vehicles', err);
@@ -69,7 +64,7 @@ export default function Maintenance() {
     e.preventDefault();
     setError('');
     try {
-      await axios.post('http://localhost:3000/api/maintenance', formData, getHeaders());
+      await api.post('/maintenance', formData);
       setFormData({ vehicleId: '', description: '', cost: '' });
       fetchLogs();
       fetchVehicles();
@@ -82,7 +77,7 @@ export default function Maintenance() {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to close this ticket? The vehicle will be returned to the dispatch pool.')) return;
     try {
-      await axios.post(`http://localhost:3000/api/maintenance/${id}/close`, {}, getHeaders());
+      await api.post(`/maintenance/${id}/close`);
       fetchLogs();
       fetchVehicles();
     } catch (err) {

@@ -14,7 +14,24 @@ const { authenticateToken } = require('./src/middlewares/authMiddleware');
 
 const app = express();
 
-app.use(cors());
+const clientUrl = process.env.CLIENT_URL;
+const corsOptions = clientUrl
+  ? {
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        const allowedOrigins = clientUrl.split(',').map(u => u.trim().replace(/\/+$/, ''));
+        const cleanOrigin = origin.replace(/\/+$/, '');
+        if (allowedOrigins.includes(cleanOrigin) || allowedOrigins.includes('*')) {
+          callback(null, true);
+        } else {
+          callback(new Error(`Not allowed by CORS: ${origin}`));
+        }
+      },
+      credentials: true,
+    }
+  : {};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Public Routes

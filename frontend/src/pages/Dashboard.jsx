@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import {
   Truck,
@@ -37,10 +37,7 @@ export default function Dashboard() {
 
   const fetchKPIs = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:3000/api/dashboard/kpis', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/dashboard/kpis');
       setKpis(res.data);
     } catch (err) {
       console.error('Failed to fetch KPIs', err);

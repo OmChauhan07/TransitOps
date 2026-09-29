@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { Play, Check, XCircle, Trash2, Search, X } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
 import StatusPill from '../components/StatusPill';
@@ -46,14 +46,9 @@ export default function Trips() {
     applyFilters();
   }, [trips, filters]);
 
-  const getHeaders = () => {
-    const token = localStorage.getItem('token');
-    return { headers: { Authorization: `Bearer ${token}` } };
-  };
-
   const fetchTrips = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/trips', getHeaders());
+      const res = await api.get('/trips');
       setTrips(res.data);
     } catch (err) {
       console.error('Failed to fetch trips', err);
@@ -63,8 +58,8 @@ export default function Trips() {
   const fetchLookups = async () => {
     try {
       const [vRes, dRes] = await Promise.all([
-        axios.get('http://localhost:3000/api/vehicles', getHeaders()),
-        axios.get('http://localhost:3000/api/drivers', getHeaders())
+        api.get('/vehicles'),
+        api.get('/drivers')
       ]);
       setVehicles(vRes.data);
       setDrivers(dRes.data);
@@ -110,7 +105,7 @@ export default function Trips() {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/trips', finalFormData, getHeaders());
+      await api.post('/trips', finalFormData);
       setFormData({
         source: '', destination: '', cargoWeight: '', plannedDistance: '', vehicleId: '', driverId: ''
       });
@@ -124,7 +119,7 @@ export default function Trips() {
   const handleDispatch = async (id, e) => {
     e.stopPropagation();
     try {
-      await axios.post(`http://localhost:3000/api/trips/${id}/dispatch`, {}, getHeaders());
+      await api.post(`/trips/${id}/dispatch`);
       fetchTrips();
       fetchLookups();
     } catch (err) {
@@ -136,7 +131,7 @@ export default function Trips() {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to cancel this trip?')) return;
     try {
-      await axios.post(`http://localhost:3000/api/trips/${id}/cancel`, {}, getHeaders());
+      await api.post(`/trips/${id}/cancel`);
       fetchTrips();
       fetchLookups();
       setInspectorMode('CREATE');
@@ -149,7 +144,7 @@ export default function Trips() {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this DRAFT trip?')) return;
     try {
-      await axios.delete(`http://localhost:3000/api/trips/${id}`, getHeaders());
+      await api.delete(`/trips/${id}`);
       fetchTrips();
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to delete trip');
@@ -160,7 +155,7 @@ export default function Trips() {
     e.preventDefault();
     setError('');
     try {
-      await axios.post(`http://localhost:3000/api/trips/${activeTrip.id}/complete`, completeData, getHeaders());
+      await api.post(`/trips/${activeTrip.id}/complete`, completeData);
       setInspectorMode('CREATE');
       setActiveTrip(null);
       fetchTrips();

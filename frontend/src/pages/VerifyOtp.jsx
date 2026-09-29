@@ -13,6 +13,8 @@ export default function VerifyOtp() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   
+  const [resending, setResending] = useState(false);
+  
   const inputRefs = useRef([]);
 
   useEffect(() => {
@@ -69,13 +71,27 @@ export default function VerifyOtp() {
     setLoading(true);
 
     try {
-      await api.post('/verify-otp', { email, otp });
+      await api.post('/auth/verify-otp', { email, otp });
       setSuccess('Email verified successfully! Redirecting to login...');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
       setError(err.response?.data?.error || 'Invalid or expired OTP.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setError('');
+    setSuccess('');
+    setResending(true);
+    try {
+      const res = await api.post('/auth/resend-otp', { email });
+      setSuccess(res.data?.message || 'New verification code sent to your email.');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to resend verification code.');
+    } finally {
+      setResending(false);
     }
   };
 
@@ -124,7 +140,7 @@ export default function VerifyOtp() {
             <div>
               <button
                 type="submit"
-                disabled={loading || success}
+                disabled={loading || Boolean(success)}
                 className="flex w-full justify-center items-center gap-2 rounded-lg bg-brand-accent px-3 py-3 text-sm font-medium text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent transition-colors shadow-[0_0_15px_rgba(245,124,0,0.3)] disabled:opacity-50"
               >
                 {loading ? 'Verifying...' : 'Verify Email'} <ArrowRight className="w-4 h-4" />
@@ -133,8 +149,13 @@ export default function VerifyOtp() {
             
             <p className="text-center text-sm text-gray-500 mt-6">
               Didn't receive the code?{' '}
-              <button type="button" className="text-brand-accent hover:text-orange-400 font-medium transition-colors">
-                Resend
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resending || loading}
+                className="text-brand-accent hover:text-orange-400 font-medium transition-colors disabled:opacity-50"
+              >
+                {resending ? 'Resending...' : 'Resend'}
               </button>
             </p>
           </form>

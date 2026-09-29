@@ -15,7 +15,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      await api.post('/forgot-password', { email });
+      await api.post('/auth/forgot-password', { email });
       navigate('/reset-password', { state: { email } });
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to process request.');

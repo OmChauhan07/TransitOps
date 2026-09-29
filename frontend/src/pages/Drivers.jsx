@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { Search } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
 import StatusPill from '../components/StatusPill';
@@ -31,10 +31,7 @@ export default function Drivers() {
 
   const fetchDrivers = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:3000/api/drivers', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/drivers');
       setDrivers(res.data);
     } catch (err) {
       console.error('Failed to fetch drivers', err);
@@ -88,13 +85,10 @@ export default function Drivers() {
     e.preventDefault();
     setError('');
     try {
-      const token = localStorage.getItem('token');
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      
       if (selectedAsset && selectedAsset.id) {
-        await axios.put(`http://localhost:3000/api/drivers/${selectedAsset.id}`, formData, config);
+        await api.put(`/drivers/${selectedAsset.id}`, formData);
       } else {
-        await axios.post('http://localhost:3000/api/drivers', formData, config);
+        await api.post('/drivers', formData);
       }
       selectDriver(null);
       fetchDrivers();

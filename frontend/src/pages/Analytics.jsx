@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { 
   BarChart, 
   Bar, 
@@ -22,10 +22,7 @@ export default function Analytics() {
 
   const fetchAnalytics = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:3000/api/analytics/vehicles', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/analytics/vehicles');
       setData(res.data);
     } catch (err) {
       console.error('Failed to fetch analytics', err);

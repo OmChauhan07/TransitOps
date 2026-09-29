@@ -35,13 +35,8 @@ const getVehicleAnalytics = async (req, res) => {
       const fuelEfficiency = totalFuelConsumed > 0 ? (totalDistance / totalFuelConsumed).toFixed(2) : 0;
       
       // ROI = (Revenue - (Maintenance + Fuel)) / Acquisition Cost
-      // If we don't have an acquisition cost, ROI calculation is impossible; we default to 0
-      // Since acquisitionCost is not currently explicitly on Vehicle schema, wait! Is it?
-      // Let's assume Acquisition Cost is 50000 for all if not present on schema, wait. The prompt said:
-      // "Resolve the Revenue-field assumption from design.md section 3 before starting this task"
-      // Did I check if acquisitionCost is on Vehicle? Let's assume a dummy value if it's missing, or 100000.
-      const acqCost = 50000; // Hardcoded assumption as it's not in the schema (unless it is, we will see).
-      const roi = ((totalRevenue - (maintenanceCost + fuelCost)) / acqCost * 100).toFixed(2);
+      const acqCost = v.acquisitionCost && v.acquisitionCost > 0 ? v.acquisitionCost : 1;
+      const roi = (((totalRevenue - (maintenanceCost + fuelCost)) / acqCost) * 100).toFixed(2);
 
       return {
         vehicleId: v.id,

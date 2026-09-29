@@ -62,6 +62,38 @@ const verifyOtp = async (req, res) => {
   }
 };
 
+// --- 2b. Resend OTP ---
+const resendOtp = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required.' });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) return res.status(404).json({ error: 'User not found.' });
+    if (user.isVerified) return res.status(400).json({ error: 'User is already verified. Please login.' });
+
+    // Generate fresh OTP with 10 min expiration
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await prisma.user.update({
+      where: { email },
+      data: { otp, otpExpiresAt },
+    });
+
+    await sendOTP(user.email, otp);
+
+    res.json({ message: 'New verification code sent to your email.' });
+  } catch (error) {
+    console.error('Failed to resend OTP:', error);
+    res.status(500).json({ error: 'Failed to resend verification code.' });
+  }
+};
+
 // --- 3. Login (Updated) ---
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -78,9 +110,15 @@ const login = async (req, res) => {
       return res.status(403).json({ error: 'Please verify your email using the OTP sent to you before logging in.' });
     }
 
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      console.error('FATAL: JWT_SECRET is not configured.');
+      return res.status(500).json({ error: 'Server authentication configuration error.' });
+    }
+
     const token = jwt.sign(
       { userId: user.id, email: user.email, name: user.name, role: user.role },
-      process.env.JWT_SECRET || 'fallback_secret',
+      secret,
       { expiresIn: '2h' }
     );
 
@@ -171,4 +209,4 @@ const getDashboard = (req, res) => {
   });
 };
 
-module.exports = { register, verifyOtp, login, getDashboard, forgotPassword, resetPassword };
+module.exports = { register, verifyOtp, resendOtp, login, getDashboard, forgotPassword, resetPassword };

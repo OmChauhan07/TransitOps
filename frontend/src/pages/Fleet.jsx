@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import { Search } from 'lucide-react';
 import PageLayout from '../components/app/PageLayout';
 import StatusPill from '../components/StatusPill';
@@ -31,10 +31,7 @@ export default function Fleet() {
 
   const fetchVehicles = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:3000/api/vehicles', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/vehicles');
       setVehicles(res.data);
     } catch (err) {
       console.error('Failed to fetch vehicles', err);
@@ -91,13 +88,10 @@ export default function Fleet() {
     e.preventDefault();
     setError('');
     try {
-      const token = localStorage.getItem('token');
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      
       if (selectedAsset && selectedAsset.id) {
-        await axios.put(`http://localhost:3000/api/vehicles/${selectedAsset.id}`, formData, config);
+        await api.put(`/vehicles/${selectedAsset.id}`, formData);
       } else {
-        await axios.post('http://localhost:3000/api/vehicles', formData, config);
+        await api.post('/vehicles', formData);
       }
       selectVehicle(null);
       fetchVehicles();
