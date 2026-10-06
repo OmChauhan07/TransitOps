@@ -7,6 +7,7 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -16,7 +17,9 @@ const ForgotPassword = () => {
 
     try {
       await api.post('/auth/forgot-password', { email });
-      navigate('/reset-password', { state: { email } });
+      // Navigate to login with success message or show success on this page
+      setError('');
+      setSuccess('If that email exists, a reset link has been sent to your inbox.');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to process request.');
     } finally {
@@ -37,7 +40,7 @@ const ForgotPassword = () => {
           Forgot Password
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">
-          Enter your email and we'll send you a 6-digit reset code.
+          Enter your email and we'll send you a password reset link.
         </p>
       </div>
 
@@ -72,6 +75,9 @@ const ForgotPassword = () => {
               </button>
             </div>
           </form>
+
+          {error && <div className="bg-red-500/10 text-red-400 border border-red-500/20 p-3 rounded-lg mb-6 text-sm text-center">{error}</div>}
+          {success && <div className="bg-green-500/10 text-green-400 border border-green-500/20 p-3 rounded-lg mb-6 text-sm text-center">{success}</div>}
 
           <p className="mt-6 text-center text-sm text-gray-500">
             Remember your password?{' '}

@@ -4,7 +4,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/app/AppLayout';
 
 import Register from './pages/Register';
-import VerifyOtp from './pages/VerifyOtp';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
@@ -35,7 +34,6 @@ function App() {
 
           {/* Public Auth Routes */}
           <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
-          <Route path="/verify-otp" element={<AuthLayout><VerifyOtp /></AuthLayout>} />
           <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
           <Route path="/forgot-password" element={<AuthLayout><ForgotPassword /></AuthLayout>} />
           <Route path="/reset-password" element={<AuthLayout><ResetPassword /></AuthLayout>} />

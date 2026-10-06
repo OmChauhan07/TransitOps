@@ -15,7 +15,7 @@ async function main() {
     await prisma.user.upsert({
       where: { email: u.email },
       update: { role: u.role, name: u.name },
-      create: { ...u, password: hashed, isVerified: true }, // isVerified: true skips OTP for seeded demo users only
+      create: { ...u, password: hashed },
     });
   }
 
